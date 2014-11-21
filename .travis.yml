@@ -1,3 +1,20 @@
 language: android
+android:
+  components:
+    # The BuildTools version used by your project
+    - build-tools-21.1.1
+
+    # The SDK version used to compile your project
+    - android-21
+
 
 script: ./gradlew build assembleDebug
+
+deploy:
+  provider: releases
+  api_key: 76c4ef036981990ed14bcd9562985fe7221a0a35
+  file: NFCsender.apk
+  skip_cleanup:true  
+  on:
+    tags: true
+    all_branches: true
