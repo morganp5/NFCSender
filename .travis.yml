@@ -14,7 +14,7 @@ deploy:
   provider: releases
   api_key: 76c4ef036981990ed14bcd9562985fe7221a0a35
   file: NFCsender.apk
-  skip_cleanup:true  
+  skip_cleanup: true  
   on:
     tags: true
     all_branches: true
