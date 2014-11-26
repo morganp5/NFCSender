@@ -1,4 +1,1 @@
-NFCSubway
-=========
-
-NFCSubway
+NFC Security Card Emulation Application

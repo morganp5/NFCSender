@@ -9,12 +9,13 @@ android:
 
 
 script: ./gradlew build assembleDebug
+before_deploy: cp app/build/outputs/apk/app-debug.apk app/build/outputs/apk/NFCSender.apk
 
 deploy:
   provider: releases
   api_key: 76c4ef036981990ed14bcd9562985fe7221a0a35
-  file: NFCsender.apk
-  skip_cleanup:true  
+  file: app/build/outputs/apk/NFCSender.apk
+  skip_cleanup: true  
   on:
     tags: true
     all_branches: true
