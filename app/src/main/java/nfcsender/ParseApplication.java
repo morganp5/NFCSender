@@ -1,4 +1,4 @@
-package com.lock.peter.nfcsender;
+package nfcsender;
 
 import com.parse.Parse;
 import com.parse.ParseACL;

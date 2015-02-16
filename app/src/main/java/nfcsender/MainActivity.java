@@ -1,4 +1,4 @@
-package com.lock.peter.nfcsender;
+package nfcsender;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.content.Intent;
 
+import com.lock.peter.nfcsender.*;
 import com.parse.ParseAnonymousUtils;
 import com.parse.ParseUser;
 
