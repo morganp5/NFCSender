@@ -21,10 +21,7 @@ import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,8 +29,6 @@ import android.widget.TextView;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.lock.peter.nfclock.R;
-import com.lock.peter.nfclock.Door;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -46,75 +41,66 @@ import java.util.List;
 /**
  * Generic UI for sample discovery.
  */
-public class CardReaderFragment extends Fragment implements LoyaltyCardReader.AccountCallback, OnClickListener {
+public class DoorActivity extends Activity implements AccessCardReader.AccountCallback, OnClickListener {
 
-    public static final String TAG = "CardReaderFragment";
-    // Recommend NfcAdapter flags for reading from other Android devices. Indicates that this
-    // activity is interested in NFC-A devices (including other Android devices), and that the
-    // system should not check for the presence of NDEF-formatted data (e.g. Android Beam).
-    public static int READER_FLAGS =
-            NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK;
-    public LoyaltyCardReader mLoyaltyCardReader;
+    public static final String TAG = "DoorActivity";
+    public static int READER_FLAGS = NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK;
+    public AccessCardReader mAccessCardReader;
     private TextView mAccountField;
     private EditText newUser;
     private Button updateUsers;
 
     ArrayList<String> users = new ArrayList<>();
-    List<ParseUser> list11 =  new ArrayList<>();
+    List<ParseUser> list11 = new ArrayList<>();
 
     /**
      * Called when sample is created. Displays generic UI with welcome text.
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.main_fragment, container, false);
-        if (v != null) {
-            Door door = new Door();
-            door.onCreate();
-            mAccountField = (TextView) v.findViewById(R.id.doorStatus);
-            newUser = (EditText) v.findViewById(R.id.newUser);
-            updateUsers = (Button) v.findViewById(R.id.updateUsers);
-            updateUsers.setOnClickListener(oclBtbUpdate);
-            mLoyaltyCardReader = new LoyaltyCardReader(this);
-            users.add("peter");
-            String doorId = getArguments().getString("parseId");
-            Log.i(TAG, doorId);
-            ParseQuery query = new ParseQuery("Door");
-            query.whereEqualTo("objectId", doorId);
+        setContentView(R.layout.main_fragment);
 
-            query.findInBackground(new FindCallback<ParseObject>() {
+        Door door = new Door();
+        door.onCreate();
+        mAccountField = (TextView) findViewById(R.id.doorStatus);
+        newUser = (EditText) findViewById(R.id.newUser);
+        updateUsers = (Button) findViewById(R.id.updateUsers);
+        updateUsers.setOnClickListener(oclBtbUpdate);
+        //Set up the card reader
+        mAccessCardReader = new AccessCardReader(this);
+        users.add("peter");
+        Intent intent = getIntent();
+        String doorId = intent.getStringExtra("id");
+        Log.i(TAG, doorId);
+        ParseQuery query = new ParseQuery("Door");
+        query.whereEqualTo("objectId", doorId);
 
-                @Override
-                public void done(List<ParseObject> list, ParseException e) {
-                    if (e == null) {
-                        if (list.size() > 0) {
-                            ParseObject p = list.get(0);
-                            if (p.getList("Users") != null) {
-                                list11 = p.getList("Users");
-                                for (ParseUser obj : list11) {
-                                    Log.i(TAG , obj.toString());
-                                }
-                            } else {
-                                list11 = null;
+        query.findInBackground(new FindCallback<ParseObject>() {
+
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) {
+                    if (list.size() > 0) {
+                        ParseObject p = list.get(0);
+                        if (p.getList("Users") != null) {
+                            list11 = p.getList("Users");
+                            for (ParseUser obj : list11) {
+                                Log.i(TAG, obj.toString());
                             }
+                        } else {
+                            list11 = null;
                         }
                     }
                 }
-            });
+            }
+        });
 
-            Log.i(TAG , "END");
-            // Disable Android Beam and register our card reader callback
-            enableReaderMode();
-        }
-
-        return v;
+        Log.i(TAG, "END");
+        // Disable Android Beam and register our card reader callback
+        enableReaderMode();
     }
 
     @Override
@@ -142,7 +128,7 @@ public class CardReaderFragment extends Fragment implements LoyaltyCardReader.Ac
     };
 
     protected void showToast(CharSequence text) {
-        Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -160,19 +146,17 @@ public class CardReaderFragment extends Fragment implements LoyaltyCardReader.Ac
 
     private void enableReaderMode() {
         Log.i(TAG, "Enabling reader mode");
-        Activity activity = getActivity();
-        NfcAdapter nfc = NfcAdapter.getDefaultAdapter(activity);
+        NfcAdapter nfc = NfcAdapter.getDefaultAdapter(this);
         if (nfc != null) {
-            nfc.enableReaderMode(activity, mLoyaltyCardReader, READER_FLAGS, null);
+            nfc.enableReaderMode(this, mAccessCardReader, READER_FLAGS, null);
         }
     }
 
     private void disableReaderMode() {
         Log.i(TAG, "Disabling reader mode");
-        Activity activity = getActivity();
-        NfcAdapter nfc = NfcAdapter.getDefaultAdapter(activity);
+        NfcAdapter nfc = NfcAdapter.getDefaultAdapter(this);
         if (nfc != null) {
-            nfc.disableReaderMode(activity);
+            nfc.disableReaderMode(this);
         }
     }
 
@@ -190,32 +174,31 @@ public class CardReaderFragment extends Fragment implements LoyaltyCardReader.Ac
             }
         }
         for (ParseUser obj : list11) {
-            Log.i(TAG , obj.toString());
+            Log.i(TAG, obj.toString());
             if (account.contains(obj.toString())) {
                 allowed = true;
             }
         }
-
         // TODO put all door operations in separate door class
         if (!allowed) {
 
 
         } else if (account.contains("Toggle:True")) {
-            getActivity().runOnUiThread(new Runnable() {
+            this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mAccountField.setText("Door is Toggled Opened");
                 }
             });
         } else if (account.contains("Normalise:True")) {
-            getActivity().runOnUiThread(new Runnable() {
+            this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mAccountField.setText("Door is Locked");
                 }
             });
         } else {
-            getActivity().runOnUiThread(new Runnable() {
+            this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     new CountDownTimer(10000, 1000) {

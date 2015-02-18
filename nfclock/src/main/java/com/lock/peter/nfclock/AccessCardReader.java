@@ -19,6 +19,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
 import android.util.Log;
+
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -28,19 +29,22 @@ import java.util.Arrays;
  * <p/>
  * Reader mode can be invoked by calling NfcAdapter
  */
-public class LoyaltyCardReader implements NfcAdapter.ReaderCallback {
-    private static final String TAG = "LoyaltyCardReader";
+public class AccessCardReader implements NfcAdapter.ReaderCallback {
+    public interface AccountCallback {
+        public void onAccountReceived(String account);
+    }
+
+    private static final String TAG = "AccessCardReader";
     // AID for our loyalty card service.
-    private static final String SAMPLE_LOYALTY_CARD_AID = "F222222222";
+    private static final String APPLICATION_AID = "F222222222";
     // ISO-DEP command HEADER for selecting an AID.
     // Format: [Class | Instruction | Parameter 1 | Parameter 2]
     private static final String SELECT_APDU_HEADER = "00A40400";
-    // Format: [Class | Instruction | Parameter 1 | Parameter 2]
     private static final String GET_DATA_APDU_HEADER = "00CA0000";
     // "OK" status word sent in response to SELECT AID command (0x9000)
     private static final byte[] SELECT_OK_SW = {(byte) 0x90, (byte) 0x00};
 
-    String gotData = "", finalGotData = "";
+    private String gotData = "", finalGotData = "";
 
     long timeTaken = 0;
 
@@ -48,18 +52,13 @@ public class LoyaltyCardReader implements NfcAdapter.ReaderCallback {
     // foreground mode before it becomes invalid (e.g. during onPause() or onStop()).
     private WeakReference<AccountCallback> mAccountCallback;
 
-    public interface AccountCallback {
-        public void onAccountReceived(String account);
-    }
 
-    public LoyaltyCardReader(AccountCallback accountCallback) {
+    public AccessCardReader(AccountCallback accountCallback) {
         mAccountCallback = new WeakReference<AccountCallback>(accountCallback);
     }
 
     /**
      * Callback when a new tag is discovered by the system.
-     * <p/>
-     * <p>Communication with the card should take place here.
      *
      * @param tag Discovered tag
      */
@@ -68,7 +67,6 @@ public class LoyaltyCardReader implements NfcAdapter.ReaderCallback {
         Log.i(TAG, "New tag discovered");
         // Android's Host-based Card Emulation (HCE) feature implements the ISO-DEP (ISO 14443-4)
         // protocol.
-        //
         // In order to communicate with a device using HCE, the discovered tag should be processed
         // using the IsoDep class.
         IsoDep isoDep = IsoDep.get(tag);
@@ -81,8 +79,8 @@ public class LoyaltyCardReader implements NfcAdapter.ReaderCallback {
                 Log.i(TAG, "Timeout = " + isoDep.getTimeout());
                 Log.i(TAG, "MaxTransceiveLength = " + isoDep.getMaxTransceiveLength());
 
-                Log.i(TAG, "Requesting remote AID: " + SAMPLE_LOYALTY_CARD_AID);
-                byte[] selCommand = BuildSelectApdu(SAMPLE_LOYALTY_CARD_AID);
+                Log.i(TAG, "Requesting remote AID: " + APPLICATION_AID);
+                byte[] selCommand = BuildSelectApdu(APPLICATION_AID);
 
                 // Send command to remote device
                 Log.i(TAG, "Sending: " + ByteArrayToHexString(selCommand));
@@ -97,7 +95,7 @@ public class LoyaltyCardReader implements NfcAdapter.ReaderCallback {
                     // The remote NFC device will immediately respond with its stored account number
                     String accountNumber = new String(payload, "UTF-8");
                     Log.i(TAG, "Received: " + accountNumber);
-                    // Inform CardReaderFragment of received account number
+                    // Inform DoorActivity of received account number
                     if (true) {
                         timeTaken = System.currentTimeMillis();
                         while (!(gotData.contains("END"))) {
@@ -108,6 +106,7 @@ public class LoyaltyCardReader implements NfcAdapter.ReaderCallback {
                             Log.i(TAG, "Received length : " + resultLength);
                             byte[] statusWordNew = {result[resultLength - 2], result[resultLength - 1]};
                             payload = Arrays.copyOf(result, resultLength - 2);
+                            //Will Be Used For Pin Feature
                             if (Arrays.equals(SELECT_OK_SW, statusWordNew)) {
                                 gotData = new String(payload, "UTF-8");
                                 Log.i(TAG, "Received: " + gotData);
@@ -121,17 +120,6 @@ public class LoyaltyCardReader implements NfcAdapter.ReaderCallback {
                         mAccountCallback.get().onAccountReceived(accountNumber);
 
                     }
-                    //mAccountCallback.get().onAccountReceived(accountNumber);
-
-                    /*String seedVal = "PRESHAREDKEY";
-                    String decodedString = null;
-                    try {
-                        decodedString = AESHelper.decrypt(seedVal, accountNumber);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e("ARNAV", "failed to decrypt");
-                        decodedString = accountNumber;
-                    }*/
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Error communicating with card: " + e.toString());
@@ -142,7 +130,6 @@ public class LoyaltyCardReader implements NfcAdapter.ReaderCallback {
     /**
      * Build APDU for SELECT AID command. This command indicates which service a reader is
      * interested in communicating with. See ISO 7816-4.
-     *
      * @param aid Application ID (AID) to select
      * @return APDU for SELECT AID command
      */
@@ -153,16 +140,15 @@ public class LoyaltyCardReader implements NfcAdapter.ReaderCallback {
 
     /**
      * Build APDU for GET_DATA command. See ISO 7816-4.
-     *
      * @return APDU for SELECT AID command
      */
     public static byte[] BuildGetDataApdu() {
         // Format: [CLASS | INSTRUCTION | PARAMETER 1 | PARAMETER 2 | LENGTH | DATA]
         return HexStringToByteArray(GET_DATA_APDU_HEADER + "0FFF");
     }
+
     /**
      * Utility class to convert a byte array to a hexadecimal string.
-     *
      * @param bytes Bytes to convert
      * @return String, containing hexadecimal representation.
      */
@@ -177,11 +163,10 @@ public class LoyaltyCardReader implements NfcAdapter.ReaderCallback {
         }
         return new String(hexChars);
     }
+
     /**
      * Utility class to convert a hexadecimal string to a byte string.
-     * <p/>
-     * <p>Behavior with input strings containing non-hexadecimal characters is undefined.
-     *
+     * Behavior with input strings containing non-hexadecimal characters is undefined.
      * @param s String containing hexadecimal characters to convert
      * @return Byte array generated from input
      */
