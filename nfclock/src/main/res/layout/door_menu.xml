@@ -1,81 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/door_menu"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="#009ACE"
     android:orientation="vertical"
-    android:weightSum="1"
-    android:id="@+id/door_menu"
-    android:background="#009ACE">
+    android:weightSum="1">
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Select a door to emulate(must have door pin)"
         android:id="@+id/textView"
-        android:background="#009ACE"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
         android:layout_alignParentTop="true"
+        android:layout_marginBottom="30dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="30dp" />
+        android:background="#009ACE"
+        android:text="Select a door to emulate"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ffffffff"
+        android:textSize="40dp" />
 
     <Spinner
-        android:id="@+id/spinner2"
-        android:layout_width="match_parent"
+        android:id="@+id/selectDoor"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/textView"
-        android:layout_alignParentStart="true" />
+        android:layout_toLeftOf="@+id/addDoorButton" />
+    />
+
+    <Button
+        android:id="@+id/addDoorButton"
+        android:layout_width="124dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/textView"
+        android:layout_gravity="center_horizontal"
+        android:text="Add New Door"
+
+        />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_gravity="center_horizontal"
+        android:background="#009ACE"
+        android:src="@drawable/com_act_ui_app_logo" />
+
+    <EditText
+        android:id="@+id/doorCodeET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/selectDoor"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:maxWidth="100dp"
+        android:minWidth="100dp"
+        android:visibility="invisible"
+        android:layout_marginTop="20dp" />
+
+    <TextView
+        android:id="@+id/doorCodeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnSubmit"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/selectDoor"
+        android:layout_toStartOf="@+id/btnSubmit"
+        android:text="Enter Door Code"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:visibility="invisible"
+        android:layout_marginTop="20dp" />
 
     <Button
         android:id="@+id/btnSubmit"
         android:layout_width="122dp"
         android:layout_height="wrap_content"
-        android:text="Submit"
+        android:layout_alignStart="@+id/doorCodeET"
+        android:layout_below="@+id/doorCodeET"
         android:layout_gravity="center_horizontal"
-        android:layout_above="@+id/imageView2"
-        android:layout_alignParentEnd="true" />
+        android:text="Select Door"
+        android:layout_marginTop="20dp"
+        android:visibility="invisible" />
 
-    <Button
-        android:layout_width="124dp"
-        android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/button4"
-        android:layout_gravity="center_horizontal"
-        android:layout_below="@+id/spinner2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="108dp" />
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="420dp"
-        android:src="@drawable/com_act_ui_app_logo"
-        android:background="#009ACE"
-        android:id="@+id/imageView2"
-        android:layout_gravity="center_horizontal"
-        android:layout_below="@+id/button4"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="40dp"
-        android:layout_alignParentEnd="true" />
-
-  <!--  <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/editText"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:maxWidth="100dp"
-        android:minWidth="100dp"
-        android:layout_below="@+id/spinner2"
-        android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enter Door Code"
-        android:id="@+id/textView2"
-        android:layout_below="@+id/spinner2"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/btnSubmit"
-        android:layout_above="@+id/btnSubmit"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
--->
 </RelativeLayout>

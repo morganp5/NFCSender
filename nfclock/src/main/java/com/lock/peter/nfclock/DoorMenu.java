@@ -8,22 +8,19 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.view.ViewGroup.LayoutParams;
 
 import com.parse.ParseObject;
 
 import java.util.List;
-//TODO turn into fragment and use main activity to coordinate
+
 public class DoorMenu extends Activity implements OnItemSelectedListener {
 
 
@@ -31,12 +28,8 @@ public class DoorMenu extends Activity implements OnItemSelectedListener {
 
     private Spinner selectDoor;
     private Boolean selectDoorInit = false;
-
-    private Button btnSubmit;
-    private EditText doorPinTV;
-
-    private String selectedDoor = "";
-
+    private Button selectDoorButton;
+    private EditText doorCodeET;
     //Parse Adapter For Pulling List Of Doors
     private CustomAdapter mainAdapter;
 
@@ -46,8 +39,6 @@ public class DoorMenu extends Activity implements OnItemSelectedListener {
         setContentView(R.layout.door_menu);
         pullDoors();
         addListenerOnButton();
-        selectDoor.setOnItemSelectedListener(this);
-
     }
 
     // add items into spinner dynamically
@@ -59,58 +50,41 @@ public class DoorMenu extends Activity implements OnItemSelectedListener {
         mainAdapter.loadObjects();
         selectDoor.setAdapter(mainAdapter);
         selectDoor.setPrompt("Select Door");
+        selectDoor.setOnItemSelectedListener(this);
     }
 
-    // get the selected dropdown list value
+    // Get the selected dropdown list value
     public void addListenerOnButton() {
 
-        selectDoor = (Spinner) findViewById(R.id.selectDoor);
-        btnSubmit = (Button) findViewById(R.id.btnSubmit);
-        btnSubmit.setOnClickListener(new OnClickListener() {
-
-
+        selectDoorButton = (Button) findViewById(R.id.btnSubmit);
+        selectDoorButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                //mainAdapter.getDoor();
                 ParseObject door = (ParseObject) selectDoor.getSelectedItem();
-                List<ParseObject> users = door.getList("Users");
-                String output = "";
-                Log.e("DOORMENUTVPIN", doorPinTV.getText().toString());
-                Log.e("DOORMENUSPIN", door.get("Pin").toString());
+                String doorPin = door.get("Pin").toString();
+                String userPin = doorCodeET.getText().toString();
+                Log.e("USER_ENTERED_PIN", userPin);
+                Log.e(TAG , doorPin);
                 door.fetchIfNeededInBackground();
-                if(doorPinTV.getText().toString().equals(door.get("Pin").toString())){
-                    Log.e(TAG, door.get("Pin").toString());
+                if (userPin.equals(doorPin)){
                     Intent intent = new Intent(getApplicationContext(), DoorActivity.class);
                     intent.putExtra("id", door.getObjectId());
                     startActivity(intent);
                 }
             }
-
         });
+
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (selectDoorInit) {
-            //TODO MAKE Elements XML and inject that instead
-            RelativeLayout mRlayout = (RelativeLayout) findViewById(R.id.door_menu);
-            RelativeLayout.LayoutParams mRparams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            mRparams.setMargins(10, 30, 10, 30);
-            mRparams.addRule(RelativeLayout.BELOW, R.id.selectDoor);
-            TextView tv = new TextView(this);
-            tv.setText("Enter Door Code");
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-            tv.setLayoutParams(mRparams);
-            mRlayout.addView(tv);
-            doorPinTV = new EditText(this);
-            mRparams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            mRparams.addRule(RelativeLayout.BELOW, R.id.selectDoor);
-            mRparams.addRule(RelativeLayout.ALIGN_PARENT_END);
+            doorCodeET = (EditText) findViewById(R.id.doorCodeET);
+            TextView doorCodeText = (TextView) findViewById(R.id.doorCodeText);
+            doorCodeET.setVisibility(View.VISIBLE);
+            doorCodeText.setVisibility(View.VISIBLE);
+            selectDoorButton.setVisibility(View.VISIBLE);
 
-            doorPinTV.setLayoutParams(mRparams);
-            //myEditText.setMinWidth(100);
-            doorPinTV.setWidth(400);
-            mRlayout.addView(doorPinTV);
         } else selectDoorInit = !selectDoorInit;
     }
 
