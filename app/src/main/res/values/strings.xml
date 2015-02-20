@@ -11,6 +11,20 @@
     <string name="SignupBtn">Sign Up</string>
     <string name="LogoutBtn">Log Out</string>
     <string name="Welcome">Welcome!</string>
+    <string name="confirmPassword">Confirm Password</string>
+    <string name="title_activity_main">MVP Example</string>
+    <string name="username_error">Username cannot be empty</string>
+    <string name="password_error">Password cannot be empty</string>
+    <string name="title_activity_unlock_door">UnlockDoor</string>
+    <string name="unlockDoorText">Present Phone To Door To Unlock</string>
+    <string name="toggleDoorText">Present Phone To Door To Toggle Door Open</string>
+    <string name="normaliseDoorText">Present Phone To Door To Normalise Door</string>
+    <string name="parse_app_id">OO2FrQNqEfSEOSQUjl2sEvcJS8CtbKcSFsAaROd3</string>
+    <string name="parse_client_key">PIb9iRwlcENfnGAEXrKMrVi6I00Kq2uv6O1o3cXT</string>
+    <string name="large_payload">This is a large payload that will eventually contain parse information </string>
+    <string name="service_name">Emulation Service</string>
+    <string name="card_title">DTU</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_main_activity2">MainActivity2</string>
 
 </resources>
-
