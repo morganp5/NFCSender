@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#009ACE"
+    android:clickable="false"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/unlockDoor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/unlockDoorWithPin"
+        android:layout_alignLeft="@+id/unlockDoorWithPin"
+        android:layout_alignStart="@+id/unlockDoorWithPin"
+        android:layout_marginBottom="10dp"
+        android:background="#ffffffff"
+        android:minHeight="70dp"
+        android:minWidth="270dp"
+        android:nestedScrollingEnabled="false"
+        android:text="Unlock Door" />
+
+    <Button
+        android:id="@+id/unlockDoorWithPin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/toggleDoor"
+        android:layout_alignLeft="@+id/toggleDoor"
+        android:layout_alignStart="@+id/toggleDoor"
+        android:layout_marginBottom="10dp"
+        android:background="#ffffffff"
+        android:minHeight="70dp"
+        android:minWidth="270dp"
+        android:text="Unlock Door with pin" />
+
+    <Button
+        android:id="@+id/toggleDoor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="10dp"
+        android:background="#ffffffff"
+        android:minHeight="70dp"
+        android:minWidth="270dp"
+        android:text="Toggle Door" />
+
+    <Button
+        android:id="@+id/normaliseDoor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/toggleDoor"
+        android:layout_alignStart="@+id/toggleDoor"
+        android:layout_below="@+id/toggleDoor"
+        android:layout_marginBottom="10dp"
+        android:background="#ffffffff"
+        android:minHeight="70dp"
+        android:minWidth="270dp"
+        android:text="Normalise Door" />
+
+
+    <Button
+        android:id="@+id/changeUserPin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/normaliseDoor"
+        android:layout_alignRight="@+id/normaliseDoor"
+        android:layout_below="@+id/normaliseDoor"
+        android:layout_marginBottom="10dp"
+        android:background="#ffffffff"
+        android:minHeight="70dp"
+        android:minWidth="270dp"
+        android:text="Change User Pin" />
+
+    <Button
+        android:id="@+id/logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/LogoutBtn" />
+
+</RelativeLayout>
