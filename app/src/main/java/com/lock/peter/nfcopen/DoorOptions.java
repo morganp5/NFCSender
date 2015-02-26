@@ -11,10 +11,26 @@ public class DoorOptions {
 
     private static final Boolean OPTION_FALSE = false;
     private static final Boolean OPTION_TRUE = true;
-    private static Boolean toggle = OPTION_FALSE;
-    private static Boolean normalise = OPTION_FALSE;
     private static final String TAG = "DoorOptions";
     private static final Object sAccountLock = new Object();
+    private static Boolean toggle = OPTION_FALSE;
+    private static Boolean normalise = OPTION_FALSE;
+    private static Boolean pinSet = OPTION_FALSE;
+    private static int pin = 0;
+
+
+    public static Boolean isPinSet() {
+        return pinSet;
+    }
+
+    public static int getPin() {
+        return pin;
+    }
+
+    public static void setPin(int pin) {
+        DoorOptions.pin = pin;
+        pinSet = OPTION_TRUE;
+    }
 
     public static void setDefaults() {
         synchronized (sAccountLock) {
@@ -58,8 +74,7 @@ public class DoorOptions {
     public static String prepareNdefPayload(Context c) {
         if (toggle) {
             return " Toggle:True ";
-        }
-        else if (normalise) {
+        } else if (normalise) {
             return " Normalise:True ";
         }
         return "";

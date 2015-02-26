@@ -1,7 +1,9 @@
 package com.lock.peter.nfcopen;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,9 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.lock.peter.nfcopen.R;
 import com.parse.ParseUser;
+
+import de.greenrobot.event.EventBus;
 
 public class MainMenuFragment extends Fragment implements View.OnClickListener{
 
@@ -26,9 +32,7 @@ public class MainMenuFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -50,11 +54,6 @@ public class MainMenuFragment extends Fragment implements View.OnClickListener{
                 DoorOptions.setDefaults();
                 Log.d(TAG, "Unlock Door Selected");
                 mListener.onFragmentInteraction(getString(R.string.unlockDoorText));
-                break;
-            case R.id.unlockDoorWithPin:
-                //TODO Implement Basic Feature, eventually remove from menu
-                DoorOptions.setDefaults();
-                Log.d(TAG, "Unlock Door With Pen");
                 break;
             case R.id.normaliseDoor:
                 DoorOptions.setNormalise();

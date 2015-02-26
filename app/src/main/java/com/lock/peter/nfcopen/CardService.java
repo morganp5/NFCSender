@@ -19,9 +19,10 @@ package com.lock.peter.nfcopen;
 import android.nfc.cardemulation.HostApduService;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.parse.ParseUser;
+
+import de.greenrobot.event.EventBus;
 
 import java.util.Arrays;
 
@@ -41,15 +42,25 @@ public class CardService extends HostApduService {
     private static final byte[] SELECT_APDU = BuildSelectApdu(SAMPLE_LOYALTY_CARD_AID);
     private static final byte[] GET_DATA_APDU = BuildGetDataApdu();
 
-    /**
-     * Called if the connection to the NFC card is lost, in order to let the application know the
-     * cause for the disconnection (either a lost link, or another AID being selected by the
-     * reader).
-     *
-     * @param reason Either DEACTIVATION_LINK_LOSS or DEACTIVATION_DESELECTED
-     */
+    private EventBus bus = EventBus.getDefault();
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        if (!bus.isRegistered(this)) {
+//            bus.register(this);
+            Log.i(TAG, "Registered");
+        }
+    }
+
     @Override
     public void onDeactivated(int reason) {
+        Log.i(TAG, "deactivated");
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.i(TAG, "Destroyed");
     }
 
     /**
@@ -69,7 +80,7 @@ public class CardService extends HostApduService {
     public byte[] processCommandApdu(byte[] commandApdu, Bundle extras) {
         Log.i(TAG, "processCommandApdu");
         ParseUser currentUser = ParseUser.getCurrentUser();
-        String username = currentUser.getUsername().toString();
+        String username = currentUser.getUsername();
         String doorOptions = DoorOptions.prepareNdefPayload(this);
         if (Arrays.equals(SELECT_APDU, commandApdu)) {
             String accessRequest = "Username: " + username + " ToggleDoor: " + doorOptions + currentUser;
@@ -77,33 +88,22 @@ public class CardService extends HostApduService {
             Log.i(TAG, "Responding to APDU with " + accessRequest);
             return ConcatArrays(accessRequestBytes, SELECT_OK_SW);
         } else if ((Arrays.equals(GET_DATA_APDU, commandApdu))) {
-            String stringToSend;
-            try {
-                stringToSend = "Responding to get data END";
-                Log.i(TAG, "Sending");
+            if (DoorOptions.isPinSet()) {
+                int pin = DoorOptions.getPin();
+                Log.i(TAG, "Sending Pin: " + pin);
+                String stringToSend = pin + " END";
+                byte[] accountBytes = stringToSend.getBytes();
+                Log.i(TAG, stringToSend);
+                return (ConcatArrays(accountBytes, SELECT_OK_SW));
+            } else {
+                Log.i(TAG, "Requesting Door Pin");
+                Events.PinRequest pr = new Events.PinRequest();
+                bus.post(pr);
                 return null;
-
-            } catch (IndexOutOfBoundsException e) {
-                Log.i(TAG, "End");
-                Toast.makeText(this, "Reached the end of the file", Toast.LENGTH_SHORT).show();
-                stringToSend = "END";
             }
-            byte[] accountBytes = stringToSend.getBytes();
-            Log.i(TAG, stringToSend);
-            return ConcatArrays(accountBytes, SELECT_OK_SW);
         } else {
             return UNKNOWN_CMD_SW;
-
         }
-    }
-
-    public void startThread() {
-        new Thread(new Runnable() {
-            public void run() {
-
-            }
-        }).start();
-
     }
 
     /**

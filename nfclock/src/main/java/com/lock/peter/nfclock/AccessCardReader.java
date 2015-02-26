@@ -65,6 +65,7 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
     @Override
     public void onTagDiscovered(Tag tag) {
         Log.i(TAG, "New tag discovered");
+        gotData = "";
         // Android's Host-based Card Emulation (HCE) feature implements the ISO-DEP (ISO 14443-4)
         // protocol.
         // In order to communicate with a device using HCE, the discovered tag should be processed
@@ -96,25 +97,21 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
                     String accountNumber = new String(payload, "UTF-8");
                     Log.i(TAG, "Received: " + accountNumber);
                     // Inform DoorActivity of received account number
-                    if (true) {
-                        timeTaken = System.currentTimeMillis();
-                        while (!(gotData.contains("END"))) {
-                            byte[] getCommand = BuildGetDataApdu();
-                            Log.i(TAG, "Sending: " + ByteArrayToHexString(getCommand));
-                            result = isoDep.transceive(getCommand);
-                            resultLength = result.length;
-                            Log.i(TAG, "Received length : " + resultLength);
-                            byte[] statusWordNew = {result[resultLength - 2], result[resultLength - 1]};
-                            payload = Arrays.copyOf(result, resultLength - 2);
-                            //Will Be Used For Pin Feature
-                            if (Arrays.equals(SELECT_OK_SW, statusWordNew)) {
-                                gotData = new String(payload, "UTF-8");
-                                Log.i(TAG, "Received: " + gotData);
-                                finalGotData = finalGotData + gotData;
-                                Log.i(TAG, "Data transferred : " + finalGotData.length());
-                                Log.i(TAG, "Time taken: " + (System.currentTimeMillis() - timeTaken));
-
-                            }
+                    timeTaken = System.currentTimeMillis();
+                    while (!(gotData.contains("END"))) {
+                        byte[] getCommand = BuildGetDataApdu();
+                        Log.i(TAG, "Sending: " + ByteArrayToHexString(getCommand));
+                        isoDep.setTimeout(10000);
+                        result = isoDep.transceive(getCommand);
+                        resultLength = result.length;
+                        byte[] statusWordNew = {result[resultLength - 2], result[resultLength - 1]};
+                        payload = Arrays.copyOf(result, resultLength - 2);
+                        //Will Be Used For Pin Feature
+                        if (Arrays.equals(SELECT_OK_SW, statusWordNew)) {
+                            gotData = new String(payload, "UTF-8");
+                            Log.i(TAG, "Received: " + gotData);
+                            finalGotData = finalGotData + gotData;
+                            Log.i(TAG, "Data transferred : " + finalGotData.length());
                         }
                         Log.i(TAG, "Got call back");
                         mAccountCallback.get().onAccountReceived(accountNumber);
@@ -130,6 +127,7 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
     /**
      * Build APDU for SELECT AID command. This command indicates which service a reader is
      * interested in communicating with. See ISO 7816-4.
+     *
      * @param aid Application ID (AID) to select
      * @return APDU for SELECT AID command
      */
@@ -140,6 +138,7 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
 
     /**
      * Build APDU for GET_DATA command. See ISO 7816-4.
+     *
      * @return APDU for SELECT AID command
      */
     public static byte[] BuildGetDataApdu() {
@@ -149,6 +148,7 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
 
     /**
      * Utility class to convert a byte array to a hexadecimal string.
+     *
      * @param bytes Bytes to convert
      * @return String, containing hexadecimal representation.
      */
@@ -167,6 +167,7 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
     /**
      * Utility class to convert a hexadecimal string to a byte string.
      * Behavior with input strings containing non-hexadecimal characters is undefined.
+     *
      * @param s String containing hexadecimal characters to convert
      * @return Byte array generated from input
      */
