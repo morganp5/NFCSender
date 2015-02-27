@@ -49,7 +49,7 @@ public class DoorActivity extends Activity implements AccessCardReader.AccountCa
     private TextView mAccountField;
     private EditText newUser;
     private Button updateUsers;
-
+    Door door;
     ArrayList<String> users = new ArrayList<>();
     List<ParseUser> list11 = new ArrayList<>();
 
@@ -63,8 +63,12 @@ public class DoorActivity extends Activity implements AccessCardReader.AccountCa
 
         setContentView(R.layout.main_fragment);
 
-        Door door = new Door();
+        Intent intent = getIntent();
+        String doorId = intent.getStringExtra("id");
+
+        door = new Door(doorId);
         door.onCreate();
+
         mAccountField = (TextView) findViewById(R.id.doorStatus);
         newUser = (EditText) findViewById(R.id.newUser);
         updateUsers = (Button) findViewById(R.id.updateUsers);
@@ -72,32 +76,9 @@ public class DoorActivity extends Activity implements AccessCardReader.AccountCa
         //Set up the card reader
         mAccessCardReader = new AccessCardReader(this);
         users.add("peter");
-        Intent intent = getIntent();
-        String doorId = intent.getStringExtra("id");
         Log.i(TAG, doorId);
         ParseQuery query = new ParseQuery("Door");
         query.whereEqualTo("objectId", doorId);
-
-        query.findInBackground(new FindCallback<ParseObject>() {
-
-            @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                if (e == null) {
-                    if (list.size() > 0) {
-                        ParseObject p = list.get(0);
-                        if (p.getList("Users") != null) {
-                            list11 = p.getList("Users");
-                            for (ParseUser obj : list11) {
-                                Log.i(TAG, obj.toString());
-                            }
-                        } else {
-                            list11 = null;
-                        }
-                    }
-                }
-            }
-        });
-
         Log.i(TAG, "END");
         // Disable Android Beam and register our card reader callback
         enableReaderMode();
@@ -166,19 +147,9 @@ public class DoorActivity extends Activity implements AccessCardReader.AccountCa
         // This callback is run on a background thread, but updates to UI elements must be performed
         // on the UI thread.
         Log.i(TAG, account);
-        Boolean allowed = false;
-        for (java.lang.Object user : users) {
-            Log.i(TAG, user.toString());
-            if (account.contains(user.toString())) {
-                allowed = true;
-            }
-        }
-        for (ParseUser obj : list11) {
-            Log.i(TAG, obj.toString());
-            if (account.contains(obj.toString())) {
-                allowed = true;
-            }
-        }
+        Boolean allowed = door.checkIfAuthorised(account);
+
+
         // TODO put all door operations in separate door class
         if (!allowed) {
 
