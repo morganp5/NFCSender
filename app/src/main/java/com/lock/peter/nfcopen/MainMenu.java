@@ -42,7 +42,6 @@ public class MainMenu extends Activity implements OnFragmentInteractionListener 
         final String TAG = "MENU";
         Log.d(TAG, String.valueOf(uri));
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        DoorOptions.setDefaults();
         Fragment fragment = UnlockDoorFragment.newInstance(uri);
         fragment.onAttach(this);
         transaction.replace(R.id.sample_content_fragment, fragment);

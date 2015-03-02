@@ -45,7 +45,7 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
     private static final byte[] SELECT_OK_SW = {(byte) 0x90, (byte) 0x00};
 
     private String gotData = "", finalGotData = "";
-
+    private Door door;
     long timeTaken = 0;
 
     // Weak reference to prevent retain loop. mAccountCallback is responsible for exiting
@@ -53,8 +53,10 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
     private WeakReference<AccountCallback> mAccountCallback;
 
 
-    public AccessCardReader(AccountCallback accountCallback) {
+    //TODO Change to use EventBus instead of passing door
+    public AccessCardReader(AccountCallback accountCallback, Door door) {
         mAccountCallback = new WeakReference<AccountCallback>(accountCallback);
+        this.door = door;
     }
 
     /**
@@ -66,10 +68,6 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
     public void onTagDiscovered(Tag tag) {
         Log.i(TAG, "New tag discovered");
         gotData = "";
-        // Android's Host-based Card Emulation (HCE) feature implements the ISO-DEP (ISO 14443-4)
-        // protocol.
-        // In order to communicate with a device using HCE, the discovered tag should be processed
-        // using the IsoDep class.
         IsoDep isoDep = IsoDep.get(tag);
         if (isoDep != null) {
             try {
@@ -79,7 +77,6 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
                 isoDep.setTimeout(3600);
                 Log.i(TAG, "Timeout = " + isoDep.getTimeout());
                 Log.i(TAG, "MaxTransceiveLength = " + isoDep.getMaxTransceiveLength());
-
                 Log.i(TAG, "Requesting remote AID: " + APPLICATION_AID);
                 byte[] selCommand = BuildSelectApdu(APPLICATION_AID);
 
@@ -98,10 +95,10 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
                     Log.i(TAG, "Received: " + accountNumber);
                     // Inform DoorActivity of received account number
                     timeTaken = System.currentTimeMillis();
-                    while (!(gotData.contains("END"))) {
+                    while (!(gotData.contains("END")) && door.isRequiresPin()) {
                         byte[] getCommand = BuildGetDataApdu();
                         Log.i(TAG, "Sending: " + ByteArrayToHexString(getCommand));
-                        isoDep.setTimeout(10000);
+                        isoDep.setTimeout(20000);
                         result = isoDep.transceive(getCommand);
                         resultLength = result.length;
                         byte[] statusWordNew = {result[resultLength - 2], result[resultLength - 1]};

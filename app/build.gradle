@@ -25,9 +25,9 @@ android {
             abortOnError false
         }
     }
-}
 
-dependencies {
-    compile project(':ParseLoginUI')
-    compile 'de.greenrobot:eventbus:2.4.0'
+    dependencies {
+        compile project(':ParseLoginUI')
+        compile 'de.greenrobot:eventbus:2.4.0'
+    }
 }

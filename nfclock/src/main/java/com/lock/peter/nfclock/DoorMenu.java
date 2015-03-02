@@ -61,7 +61,6 @@ public class DoorMenu extends Activity implements OnItemSelectedListener {
 
     // Get the selected dropdown list value
     public void addListenerOnButton() {
-
         selectDoorButton = (Button) findViewById(R.id.btnSubmit);
         selectDoorButton.setOnClickListener(new OnClickListener() {
             @Override

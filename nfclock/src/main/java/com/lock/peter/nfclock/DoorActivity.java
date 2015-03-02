@@ -21,92 +21,97 @@ import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
-/**
- * Generic UI for sample discovery.
- */
-public class DoorActivity extends Activity implements AccessCardReader.AccountCallback, OnClickListener {
+public class DoorActivity extends Activity implements AccessCardReader.AccountCallback {
 
     public static final String TAG = "DoorActivity";
     public static int READER_FLAGS = NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK;
     public AccessCardReader mAccessCardReader;
-    private TextView mAccountField;
-    private EditText newUser;
-    private Button updateUsers;
-    Door door;
-    ArrayList<String> users = new ArrayList<>();
-    List<ParseUser> list11 = new ArrayList<>();
 
-    /**
-     * Called when sample is created. Displays generic UI with welcome text.
-     */
+    @InjectView(R.id.doorStatus)
+    TextView doorStatus;
+
+    private Door door;
+    private boolean addNewUser = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.main_fragment);
-
+        ButterKnife.inject(this);
         Intent intent = getIntent();
         String doorId = intent.getStringExtra("id");
-
         door = new Door(doorId);
-        door.onCreate();
-
-        mAccountField = (TextView) findViewById(R.id.doorStatus);
-        newUser = (EditText) findViewById(R.id.newUser);
-        updateUsers = (Button) findViewById(R.id.updateUsers);
-        updateUsers.setOnClickListener(oclBtbUpdate);
         //Set up the card reader
-        mAccessCardReader = new AccessCardReader(this);
-        users.add("peter");
-        Log.i(TAG, doorId);
-        ParseQuery query = new ParseQuery("Door");
-        query.whereEqualTo("objectId", doorId);
-        Log.i(TAG, "END");
-        // Disable Android Beam and register our card reader callback
+        mAccessCardReader = new AccessCardReader(this,door);
         enableReaderMode();
     }
 
+    @OnClick(R.id.updateUsers)
+    void addUser() {
+        addNewUser = true;
+        showToast("Swipe user phone to add");
+    }
+
     @Override
-    public void onClick(View v) {
-        Log.i(TAG, String.valueOf(v.getId()));
-        switch (v.getId()) {
-            case R.id.updateUsers:
-                String user = String.valueOf(newUser.getText());
-                newUser.setText("");
-                users.add(user);
-                Log.i(TAG, users.toString());
+    public void onAccountReceived(final String accessAttempt) {
+        // This callback is run on a background thread, but updates to UI elements must be performed
+        // on the UI thread.
+        Log.i(TAG, accessAttempt);
+        Boolean allowed = door.checkIfAuthorised(accessAttempt);
+        try {
+            JSONObject jsonUnlockRequest = new JSONObject(accessAttempt);
+            //TODO Add Toast when user added to parse from eventbus
+            if (addNewUser) {
+                String sessionToken = jsonUnlockRequest.getString("SessionToken");
+                Log.i(TAG, "Adding new user");
+                door.addAllowedUser(sessionToken);
+                addNewUser = false;
+            }
+            if (allowed) {
+                final String setting = jsonUnlockRequest.getString("Setting");
+                if (setting.equals("Open")) {
+                    openCountdown();
+                } else {
+                    this.runOnUiThread(new Runnable() {
+                        public void run() {
+                            doorStatus.setText(door.getDoorMessage(setting));
+                        }
+                    });
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
-    OnClickListener oclBtbUpdate = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            String user = String.valueOf(newUser.getText());
-            newUser.setText("");
-            users.add(user);
-            user = user + " has been added to access list";
-            showToast(user);
-            Log.i(TAG, users.toString());
-        }
-    };
+    public void openCountdown() {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new CountDownTimer(10000, 1000) {
+                    public void onTick(long millisUntilFinished) {
+                        doorStatus.setText("Door is unlocked for " + millisUntilFinished / 1000);
+                    }
+                    public void onFinish() {
+                        doorStatus.setText("Door is Locked");
+                    }
+                }.start();
+            }
+        });
+    }
+
 
     protected void showToast(CharSequence text) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
@@ -140,54 +145,4 @@ public class DoorActivity extends Activity implements AccessCardReader.AccountCa
             nfc.disableReaderMode(this);
         }
     }
-
-
-    @Override
-    public void onAccountReceived(final String account) {
-        // This callback is run on a background thread, but updates to UI elements must be performed
-        // on the UI thread.
-        Log.i(TAG, account);
-        Boolean allowed = door.checkIfAuthorised(account);
-
-
-        // TODO put all door operations in separate door class
-        if (!allowed) {
-
-
-        } else if (account.contains("Toggle:True")) {
-            this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mAccountField.setText("Door is Toggled Opened");
-                }
-            });
-        } else if (account.contains("Normalise:True")) {
-            this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mAccountField.setText("Door is Locked");
-                }
-            });
-        } else {
-            this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    new CountDownTimer(10000, 1000) {
-
-                        public void onTick(long millisUntilFinished) {
-                            mAccountField.setText("Door is unlocked for " + millisUntilFinished / 1000);
-                        }
-
-                        public void onFinish() {
-                            mAccountField.setText("Door is Locked");
-                        }
-                    }.start();
-                }
-            });
-
-        }
-
-    }
-
-
 }

@@ -2,6 +2,8 @@ package com.lock.peter.nfclock;
 
 import android.util.Log;
 import com.parse.GetCallback;
+import com.parse.LogInCallback;
+import com.parse.ParseACL;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
@@ -24,6 +26,8 @@ public class Door {
     private String doorName = "";
     private ArrayList<ParseUser> users = new ArrayList<ParseUser>();
     private final ArrayList<String> groupUsers = new ArrayList<>();
+    private ParseRole doorRole;
+    private String doorMessage;
 
     //Constructor pulls door object from parse and sets up values
     //TODO Change Contructor to add new door to parse add seperate method for pulling existing doors
@@ -34,12 +38,12 @@ public class Door {
                                        @Override
                                        public void done(ParseObject door, ParseException e) {
                                            if (e == null) {
-                                               requiresPin = door.getBoolean("requiresPin");
+                                               setRequiresPin(door.getBoolean("requiresPin"));
                                                setDoorName(door.getString("DoorName"));
                                                Log.i(TAG, door.getString("DoorName"));
                                                getAllowedUsers();
                                            } else {
-                                               Log.e(TAG,"Error Getting Door");
+                                               Log.e(TAG, "Error Getting Door");
                                            }
                                        }
                                    }
@@ -47,20 +51,34 @@ public class Door {
         );
     }
 
-    public void onCreate() {
-        Log.i("Door", "Adding to parse");
+    public void addAllowedUser(String sessionToken){
+        ParseUser user = new ParseUser();
+        user.becomeInBackground(sessionToken,new LogInCallback() {
+            public void done(ParseUser user, ParseException e) {
+                if (e == null && user != null) {
+                    Log.i(TAG, "The sesion token user is " + user.getUsername());
+                    doorRole.getUsers().add(user);
+                    doorRole.saveInBackground();
+                    groupUsers.add(user.getUsername());
+                } else if (user == null) {
+                    Log.i(TAG,"Login Failed User Is Null");
+                } else {
+                    Log.i(TAG,"Login Failed ");
+                }
+            }
+        });
     }
 
-    public void getAllowedUsers(){
+    private void getAllowedUsers() {
         ParseQuery<ParseRole> query2 = ParseRole.getQuery();
-        Log.i(TAG,getDoorName());
+        Log.i(TAG, getDoorName());
         query2.whereEqualTo("name", getDoorName());
         query2.findInBackground(new FindCallback<ParseRole>() {
             @Override
             public void done(List<ParseRole> objects, ParseException e) {
                 if (e == null) {
                     for (ParseRole role : objects) {
-                        Log.i(TAG , role.getObjectId());
+                        doorRole = role ;
                         ParseRelation<ParseUser> usersRelation = role.getRelation("users");
                         ParseQuery<ParseUser> usersQuery = usersRelation.getQuery();
                         usersQuery.findInBackground(new FindCallback<ParseUser>() {
@@ -68,46 +86,34 @@ public class Door {
                             public void done(List<ParseUser> objects, ParseException e) {
                                 for (ParseUser user : objects) {
                                     groupUsers.add(user.getUsername());
-                                    Log.i(TAG , user.getUsername());
+                                    Log.i(TAG, user.getUsername());
                                 }
                             }
                         });
                     }
                 } else {
-                    Log.i(TAG , "Query Failed");
+                    Log.i(TAG, "Query Failed");
                 }
             }
         });
     }
-     public boolean checkIfAuthorised(String message){
-         //TODO Have NFC message sent as json to parse either
-         boolean allowed = false;
-         for (String user : groupUsers) {
-             Log.i(TAG, user);
-             if (message.contains(user)) {
-                 allowed = true;
-             }
-         }
-         Log.i(TAG, String.valueOf(allowed));
-         return allowed;
-     }
+
+    public boolean checkIfAuthorised(String message) {
+        boolean allowed = false;
+        for (String user : groupUsers) {
+            Log.i(TAG, user);
+            if (message.contains(user)) {
+                allowed = true;
+            }
+        }
+        Log.i(TAG,"User Authorized" + String.valueOf(allowed));
+        return allowed;
+    }
 
     private boolean doorOpen = false;
 
-    public boolean isDoorOpen() {
-        return doorOpen;
-    }
-
     public void setDoorOpen(boolean doorOpen) {
         this.doorOpen = doorOpen;
-    }
-
-    public void toggleDoor() {
-        setDoorOpen(true);
-    }
-
-    public void normaliseDoor() {
-        setDoorOpen(false);
     }
 
     public String getDoorName() {
@@ -118,4 +124,31 @@ public class Door {
         this.doorName = doorName;
     }
 
+    public String getDoorMessage(String setting) {
+        if(setting.equals("Toggle"))
+        {
+            setDoorOpen(true);
+            setDoorMessage("Door is Toggled Opened");
+        }
+        else {
+            setDoorOpen(false);
+            setDoorMessage("Door is Locked");
+        }
+        return doorMessage;
+    }
+
+    private void setDoorMessage(String doorMessage) {
+        this.doorMessage = doorMessage;
+    }
+
+    public boolean isRequiresPin() {
+        return requiresPin;
+    }
+
+    public void setRequiresPin(boolean requiresPin) {
+        this.requiresPin = requiresPin;
+    }
 }
+
+
+

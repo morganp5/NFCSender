@@ -29,7 +29,7 @@ import java.util.Arrays;
 public class CardService extends HostApduService {
     private static final String TAG = "CardService";
     // AID for our loyalty card service.
-    private static final String SAMPLE_LOYALTY_CARD_AID = "F222222222";
+    private static final String AID = "F222222222";
     // ISO-DEP command HEADER for selecting an AID.
     // Format: [Class | Instruction | Parameter 1 | Parameter 2]
     private static final String SELECT_APDU_HEADER = "00A40400";
@@ -39,7 +39,7 @@ public class CardService extends HostApduService {
     private static final byte[] SELECT_OK_SW = HexStringToByteArray("9000");
     // "UNKNOWN" status word sent in response to invalid APDU command (0x0000)
     private static final byte[] UNKNOWN_CMD_SW = HexStringToByteArray("0000");
-    private static final byte[] SELECT_APDU = BuildSelectApdu(SAMPLE_LOYALTY_CARD_AID);
+    private static final byte[] SELECT_APDU = BuildSelectApdu(AID);
     private static final byte[] GET_DATA_APDU = BuildGetDataApdu();
 
     private EventBus bus = EventBus.getDefault();
@@ -81,9 +81,9 @@ public class CardService extends HostApduService {
         Log.i(TAG, "processCommandApdu");
         ParseUser currentUser = ParseUser.getCurrentUser();
         String username = currentUser.getUsername();
-        String doorOptions = DoorOptions.prepareNdefPayload(this);
+        String userSessionToken = currentUser.getSessionToken();
         if (Arrays.equals(SELECT_APDU, commandApdu)) {
-            String accessRequest = "Username: " + username + " ToggleDoor: " + doorOptions + currentUser;
+            String accessRequest = DoorOptions.prepareNdefPayload(username,userSessionToken);
             byte[] accessRequestBytes = accessRequest.getBytes();
             Log.i(TAG, "Responding to APDU with " + accessRequest);
             return ConcatArrays(accessRequestBytes, SELECT_OK_SW);

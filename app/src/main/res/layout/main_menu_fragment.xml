@@ -4,24 +4,10 @@
     android:layout_height="match_parent"
     android:background="#009ACE"
     android:clickable="false"
-    android:orientation="vertical">
-
+    android:orientation="vertical"
+>
     <Button
         android:id="@+id/unlockDoor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/unlockDoorWithPin"
-        android:layout_alignLeft="@+id/unlockDoorWithPin"
-        android:layout_alignStart="@+id/unlockDoorWithPin"
-        android:layout_marginBottom="10dp"
-        android:background="#ffffffff"
-        android:minHeight="70dp"
-        android:minWidth="270dp"
-        android:nestedScrollingEnabled="false"
-        android:text="Unlock Door" />
-
-    <Button
-        android:id="@+id/unlockDoorWithPin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/toggleDoor"
@@ -31,7 +17,7 @@
         android:background="#ffffffff"
         android:minHeight="70dp"
         android:minWidth="270dp"
-        android:text="Unlock Door with pin" />
+        android:text="Unlock Door" />
 
     <Button
         android:id="@+id/toggleDoor"
@@ -77,8 +63,8 @@
         android:id="@+id/logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/changeUserPin"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:text="@string/LogoutBtn" />
-
 </RelativeLayout>

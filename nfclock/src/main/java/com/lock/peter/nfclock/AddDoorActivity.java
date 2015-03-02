@@ -54,7 +54,7 @@ public class AddDoorActivity extends Activity {
         }
         Door.put("requiresPin", requiresPin);
         Door.saveInBackground();
-        doorAdded(doorName);
+        doorAddedMessage(doorName);
         resetForm();
     }
 
@@ -80,8 +80,8 @@ public class AddDoorActivity extends Activity {
         requiresPin = false;
     }
 
-    private void doorAdded(String doorName) {
-        CharSequence text = "Door" + doorName + " has been added to Parse";
+    private void doorAddedMessage(String doorName) {
+        CharSequence text = "Door " + doorName + " has been added to Parse";
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(this, text, duration);
         toast.show();
