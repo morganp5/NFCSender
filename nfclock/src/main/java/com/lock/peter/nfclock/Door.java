@@ -1,24 +1,14 @@
 package com.lock.peter.nfclock;
 
-import android.nfc.Tag;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.parse.GetCallback;
-import com.parse.ParseACL;
-import com.parse.ParseConfig;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseException;
 import com.parse.FindCallback;
-import com.parse.Parse;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseRole;
 import com.parse.ParseUser;
-
 import java.util.ArrayList;
 import java.util.List;
 

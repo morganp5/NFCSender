@@ -8,8 +8,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
@@ -19,17 +21,18 @@ import android.widget.TextView;
 
 import com.parse.ParseObject;
 
-import java.util.List;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class DoorMenu extends Activity implements OnItemSelectedListener {
 
-
+    //TODO Fully implement ButterKnife
     private final String TAG = "DOORMENU";
 
     private Spinner selectDoor;
     private Boolean selectDoorInit = false;
     private Button selectDoorButton;
-    private EditText doorCodeET;
+    private EditText doorPinET;
     //Parse Adapter For Pulling List Of Doors
     private CustomAdapter mainAdapter;
 
@@ -37,6 +40,7 @@ public class DoorMenu extends Activity implements OnItemSelectedListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.door_menu);
+        ButterKnife.inject(this);
         pullDoors();
         addListenerOnButton();
     }
@@ -44,10 +48,12 @@ public class DoorMenu extends Activity implements OnItemSelectedListener {
     // add items into spinner dynamically
     public void pullDoors() {
         selectDoor = (Spinner) findViewById(R.id.selectDoor);
+        doorPinET = (EditText) findViewById(R.id.doorCodeET);
         mainAdapter = new CustomAdapter(this);
         //Display DoorNames in list
         mainAdapter.setTextKey("DoorName");
         mainAdapter.loadObjects();
+        Log.d(TAG , "Doors Loaded");
         selectDoor.setAdapter(mainAdapter);
         selectDoor.setPrompt("Select Door");
         selectDoor.setOnItemSelectedListener(this);
@@ -60,17 +66,16 @@ public class DoorMenu extends Activity implements OnItemSelectedListener {
         selectDoorButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseObject door = (ParseObject) selectDoor.getSelectedItem();
-                String doorPin = door.get("Pin").toString();
-                String userPin = doorCodeET.getText().toString();
-                Log.e("USER_ENTERED_PIN", userPin);
-                Log.e(TAG , doorPin);
-                door.fetchIfNeededInBackground();
-                if (userPin.equals(doorPin)){
-                    Intent intent = new Intent(getApplicationContext(), DoorActivity.class);
-                    intent.putExtra("id", door.getObjectId());
-                    startActivity(intent);
+                getDoor();
+            }
+        });
+
+        doorPinET.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    getDoor();
                 }
+                return false;
             }
         });
 
@@ -79,13 +84,33 @@ public class DoorMenu extends Activity implements OnItemSelectedListener {
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (selectDoorInit) {
-            doorCodeET = (EditText) findViewById(R.id.doorCodeET);
             TextView doorCodeText = (TextView) findViewById(R.id.doorCodeText);
-            doorCodeET.setVisibility(View.VISIBLE);
+            doorPinET.setVisibility(View.VISIBLE);
             doorCodeText.setVisibility(View.VISIBLE);
             selectDoorButton.setVisibility(View.VISIBLE);
 
         } else selectDoorInit = !selectDoorInit;
+    }
+
+    @OnClick(R.id.addDoorButton)
+    public void addNewDoor(){
+        Log.d(TAG,"HEY");
+        Intent intent = new Intent(getApplicationContext(), AddDoorActivity.class);
+        startActivity(intent);
+    }
+
+    private void getDoor(){
+        ParseObject door = (ParseObject) selectDoor.getSelectedItem();
+        String doorPin = door.get("Pin").toString();
+        String userPin = doorPinET.getText().toString();
+        Log.e("USER_ENTERED_PIN", userPin);
+        Log.e(TAG , doorPin);
+        door.fetchIfNeededInBackground();
+        if (userPin.equals(doorPin)){
+            Intent intent = new Intent(getApplicationContext(), DoorActivity.class);
+            intent.putExtra("id", door.getObjectId());
+            startActivity(intent);
+        }
     }
 
     @Override

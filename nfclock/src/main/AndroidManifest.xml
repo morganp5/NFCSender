@@ -44,6 +44,9 @@
         <activity
             android:name=".DoorActivity"
             android:label="DoorMenu"></activity>
+        <activity
+            android:name=".AddDoorActivity"
+            android:label="AddDoor"></activity>
     </application>
 
 </manifest>

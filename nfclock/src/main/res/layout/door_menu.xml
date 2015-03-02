@@ -59,6 +59,9 @@
         android:maxWidth="100dp"
         android:minWidth="100dp"
         android:visibility="invisible"
+        android:inputType="textPassword"
+        android:imeOptions="actionDone"
+        android:singleLine="true"
         android:layout_marginTop="20dp" />
 
     <TextView

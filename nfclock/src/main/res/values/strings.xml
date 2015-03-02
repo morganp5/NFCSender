@@ -16,5 +16,7 @@
 <resources>
     <string name="action_settings">Action Settings</string>
     <string name="doorPin">Action Settings</string>
+    <string name="add_door_button_label">Add Door</string>
+    <string name="enter_door">Enter Door Name</string>
 
 </resources>

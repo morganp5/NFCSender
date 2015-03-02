@@ -1,0 +1,77 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:background="#009ACE"
+    android:weightSum="1">
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="115dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="10dp"
+        android:background="#009ACE"
+        android:text="Enter Door Details"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#ffffffff"
+        android:textSize="40dp" />
+
+    <EditText
+        android:id="@+id/enter_door_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:imeOptions="actionDone"
+        android:singleLine="true"
+        android:hint="@string/enter_door"
+        ></EditText>
+
+    <EditText
+        android:id="@+id/signup_password_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:inputType="textPassword"
+        android:selectAllOnFocus="true"
+        android:hint="Enter Allowed Users" />
+
+    <RelativeLayout
+        android:layout_width="335dp"
+        android:layout_height="88dp"
+        android:layout_gravity="center_horizontal">
+
+        <CheckBox
+            android:layout_width="111dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/requires_door_pin"
+            android:layout_gravity="right"
+            android:text="Door Requires Pin"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/enter_door_pin"
+            android:checked="false" />
+
+        <EditText
+            android:id="@+id/enter_door_pin"
+            android:layout_width="138dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:inputType="textPassword"
+            android:selectAllOnFocus="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_alignTop="@+id/requires_door_pin"
+            android:layout_alignParentStart="true"
+            android:imeOptions="actionDone"
+            android:hint="Enter Pin"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/create_door"
+        android:layout_height="wrap_content"
+        android:layout_width="180dp"
+        android:text="@string/add_door_button_label" />
+
+</LinearLayout>
