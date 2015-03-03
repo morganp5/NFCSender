@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.ParseObject;
+import com.parse.ParseRole;
 
 public class AddDoorActivity extends Activity {
 
@@ -48,6 +49,8 @@ public class AddDoorActivity extends Activity {
         ParseObject Door = new ParseObject("Door");
         String doorName = String.valueOf(doorNameET.getText());
         Door.put("DoorName", doorName);
+        ParseRole Role = new ParseRole(doorName);
+        Role.saveInBackground();
         if (requiresPin) {
             int pin = Integer.parseInt(String.valueOf(doorPinEt.getText()));
             Door.put("Pin", pin);

@@ -5,16 +5,19 @@
     <TextView
         android:id="@+id/txtuser"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="114dp"
         android:textColor="#ffffffff"
         android:textSize="20sp"
-        android:background="#009ACE" />
+        android:background="#009ACE"
+        android:gravity="center"
+        android:layout_marginBottom="30dp" />
 
     <FrameLayout
         android:id="@+id/sample_content_fragment"
         android:layout_width="match_parent"
-        android:layout_height="480dp"
-        android:layout_gravity="center_horizontal|bottom" />
+        android:layout_height="479dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:background="#009ACE" />
 
 
 </FrameLayout>

@@ -10,27 +10,27 @@
         android:id="@+id/unlockDoor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/toggleDoor"
-        android:layout_alignLeft="@+id/toggleDoor"
-        android:layout_alignStart="@+id/toggleDoor"
-        android:layout_marginBottom="10dp"
         android:background="#ffffffff"
         android:minHeight="70dp"
         android:minWidth="270dp"
-        android:text="Unlock Door" />
+        android:text="Unlock Door"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/toggleDoor"
+        android:layout_alignStart="@+id/toggleDoor"
+        android:layout_marginTop="30dp" />
 
     <Button
         android:id="@+id/toggleDoor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
 
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="10dp"
         android:background="#ffffffff"
         android:minHeight="70dp"
         android:minWidth="270dp"
-        android:text="Toggle Door" />
+        android:text="Toggle Door"
+        android:layout_below="@+id/unlockDoor"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp" />
 
     <Button
         android:id="@+id/normaliseDoor"
@@ -43,7 +43,8 @@
         android:background="#ffffffff"
         android:minHeight="70dp"
         android:minWidth="270dp"
-        android:text="Normalise Door" />
+        android:text="Normalise Door"
+        android:layout_marginTop="30dp" />
 
 
     <Button
@@ -57,7 +58,8 @@
         android:background="#ffffffff"
         android:minHeight="70dp"
         android:minWidth="270dp"
-        android:text="Change User Pin" />
+        android:text="Change User Pin"
+        android:layout_marginTop="30dp" />
 
     <Button
         android:id="@+id/logout"
@@ -66,5 +68,7 @@
         android:layout_below="@+id/changeUserPin"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="@string/LogoutBtn" />
+        android:text="@string/LogoutBtn"
+        android:layout_marginTop="10dp" />
+
 </RelativeLayout>
