@@ -15,21 +15,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import de.greenrobot.event.EventBus;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 
-public class MainMenu extends Activity implements OnFragmentInteractionListener {
+public class MainMenu extends Activity {
 
     private EventBus bus = EventBus.getDefault();
+
+    @InjectView(R.id.txtuser)
+    TextView userTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        bus.register(this);
         setContentView(R.layout.main_fragment);
+        ButterKnife.inject(this);
+        bus.register(this);
         String username = ParseApplication.currentUser();
-        TextView userTV = (TextView) findViewById(R.id.txtuser);
         userTV.setText("You are logged in as " + username);
-
         MainMenuFragment fragment = new MainMenuFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         fragment.onAttach(this);
@@ -37,22 +41,18 @@ public class MainMenu extends Activity implements OnFragmentInteractionListener 
         transaction.commit();
     }
 
-    @Override
-    public void onFragmentInteraction(String uri) {
-        final String TAG = "MENU";
-        Log.d(TAG, String.valueOf(uri));
+    public void onEvent(Events.PinRequest pin) {
+        Log.i("MM", "Pin not set");
+        showPinDialog();
+    }
+    public void onEvent(Events.buttonPressed button) {
+        Log.i("MM", "Event Button Press");
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        Fragment fragment = UnlockDoorFragment.newInstance(uri);
+        Fragment fragment = UnlockDoorFragment.newInstance(button.getText());
         fragment.onAttach(this);
         transaction.replace(R.id.sample_content_fragment, fragment);
         transaction.addToBackStack("Menu");
         transaction.commit();
-    }
-
-
-    public void onEvent(Events.PinRequest pin) {
-        Log.i("MM", "Pin not set");
-        showPinDialog();
     }
 
     public void showPinDialog() {
@@ -81,6 +81,5 @@ public class MainMenu extends Activity implements OnFragmentInteractionListener 
                         });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
-
     }
 }

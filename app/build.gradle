@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.1"
@@ -30,4 +29,7 @@ android {
         compile project(':ParseLoginUI')
         compile 'de.greenrobot:eventbus:2.4.0'
     }
+}
+dependencies {
+    compile 'com.jakewharton:butterknife:5.1.1'
 }
