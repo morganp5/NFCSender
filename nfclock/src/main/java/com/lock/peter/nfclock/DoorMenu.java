@@ -22,17 +22,27 @@ import android.widget.TextView;
 import com.parse.ParseObject;
 
 import butterknife.ButterKnife;
+import butterknife.InjectView;
 import butterknife.OnClick;
+import butterknife.OnItemSelected;
 
-public class DoorMenu extends Activity implements OnItemSelectedListener {
+public class DoorMenu extends Activity {
 
-    //TODO Fully implement ButterKnife
     private final String TAG = "DOORMENU";
 
-    private Spinner selectDoor;
+    @InjectView(R.id.selectDoor)
+    Spinner selectDoor;
+
     private Boolean selectDoorInit = false;
-    private Button selectDoorButton;
-    private EditText doorPinET;
+    @InjectView(R.id.selectDoorBtn)
+    Button selectDoorButton;
+
+    @InjectView(R.id.doorCodeET)
+    EditText doorPinET;
+
+    @InjectView(R.id.doorCodeText)
+    TextView doorCodeText;
+
     //Parse Adapter For Pulling List Of Doors
     private CustomAdapter mainAdapter;
 
@@ -47,21 +57,17 @@ public class DoorMenu extends Activity implements OnItemSelectedListener {
 
     // add items into spinner dynamically
     public void pullDoors() {
-        selectDoor = (Spinner) findViewById(R.id.selectDoor);
-        doorPinET = (EditText) findViewById(R.id.doorCodeET);
         mainAdapter = new CustomAdapter(this);
         //Display DoorNames in list
         mainAdapter.setTextKey("DoorName");
         mainAdapter.loadObjects();
-        Log.d(TAG , "Doors Loaded");
+        Log.d(TAG, "Doors Loaded");
         selectDoor.setAdapter(mainAdapter);
         selectDoor.setPrompt("Select Door");
-        selectDoor.setOnItemSelectedListener(this);
     }
 
     // Get the selected dropdown list value
     public void addListenerOnButton() {
-        selectDoorButton = (Button) findViewById(R.id.btnSubmit);
         selectDoorButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,10 +86,10 @@ public class DoorMenu extends Activity implements OnItemSelectedListener {
 
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+    @OnItemSelected(R.id.selectDoor)
+    public void doorSelected() {
         if (selectDoorInit) {
-            TextView doorCodeText = (TextView) findViewById(R.id.doorCodeText);
             doorPinET.setVisibility(View.VISIBLE);
             doorCodeText.setVisibility(View.VISIBLE);
             selectDoorButton.setVisibility(View.VISIBLE);
@@ -92,27 +98,25 @@ public class DoorMenu extends Activity implements OnItemSelectedListener {
     }
 
     @OnClick(R.id.addDoorButton)
-    public void addNewDoor(){
-        Log.d(TAG,"HEY");
+    public void addNewDoor() {
         Intent intent = new Intent(getApplicationContext(), AddDoorActivity.class);
         startActivity(intent);
     }
 
-    private void getDoor(){
+    @OnClick(R.id.selectDoorBtn)
+    private void getDoor() {
         ParseObject door = (ParseObject) selectDoor.getSelectedItem();
         String doorPin = door.get("Pin").toString();
         String userPin = doorPinET.getText().toString();
         Log.e("USER_ENTERED_PIN", userPin);
-        Log.e(TAG , doorPin);
+        Log.e(TAG, doorPin);
         door.fetchIfNeededInBackground();
-        if (userPin.equals(doorPin)){
+        if (userPin.equals(doorPin)) {
             Intent intent = new Intent(getApplicationContext(), DoorActivity.class);
             intent.putExtra("id", door.getObjectId());
             startActivity(intent);
         }
     }
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-    }
+
 }
