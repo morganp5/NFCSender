@@ -1,34 +1,21 @@
 package com.lock.peter.nfcopen;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-
-import com.lock.peter.nfcopen.R;
 import com.parse.ParseUser;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.greenrobot.event.EventBus;
 
-public class MainMenuFragment extends Fragment implements View.OnClickListener{
+public class MainMenuFragment extends Fragment {
 
-    private OnFragmentInteractionListener mListener;
-
-    private static final int[] BUTTON_IDS = {
-            R.id.unlockDoor,
-            R.id.toggleDoor,
-            R.id.normaliseDoor,
-            R.id.logout,
-    };
+    private EventBus bus = EventBus.getDefault();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,55 +26,28 @@ public class MainMenuFragment extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View myView = inflater.inflate(R.layout.main_menu_fragment, container, false);
-        for (int id : BUTTON_IDS) {
-            Button button = (Button) myView.findViewById(id);
-            button.setOnClickListener(this);
-        }
+        ButterKnife.inject(this,myView);
         return myView;
     }
 
-    @Override
-    public void onClick(View v) {
-        final String TAG = "MENU";
-        switch (v.getId()) {
-            case R.id.unlockDoor:
-                DoorOptions.setDefaults();
-                Log.d(TAG, "Unlock Door Selected");
-                mListener.onFragmentInteraction(getString(R.string.unlockDoorText));
-                break;
-            case R.id.normaliseDoor:
-                DoorOptions.setNormalise();
-                Log.d(TAG, "Normalise Door Selected");
-                mListener.onFragmentInteraction(getString(R.string.normaliseDoorText));
-                break;
-            case R.id.toggleDoor:
-                DoorOptions.setToggle();
-                Log.d(TAG, "Toggle Door Selected");
-                mListener.onFragmentInteraction(getString(R.string.toggleDoorText));
-                break;
-            case R.id.logout:
+    @OnClick({ R.id.unlockDoor, R.id.normaliseDoor, R.id.toggleDoor })
+    public void pickDoor(Button door) {
+        String fragmentText = getString(R.string.unlockDoorText);
+        Events.buttonPressed button = new Events.buttonPressed();
+        if (door.getId()==R.id.normaliseDoor) {
+            fragmentText = getString(R.string.normaliseDoorText);
+            button.setText(fragmentText);
+        } else if (door.getId()==R.id.toggleDoor) {
+            button.setText( fragmentText );
+        }
+        bus.post(button);
+    }
+
+    @OnClick({R.id.logout})
+    public void logout() {
                 //TODO Remove reliance on ParseUser
                 ParseUser.logOut();
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 startActivity(intent);
-        }
     }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
 }

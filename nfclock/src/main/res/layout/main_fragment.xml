@@ -31,17 +31,19 @@ limitations under the License.
         android:textColor="#ffffffff"
         android:editable="false" />
 
-    <EditText
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/newUser"
-        android:text="Enter New Allowed User" />
+        android:layout_height="156dp"
+        android:layout_gravity="center_horizontal">
 
-    <Button
-        android:layout_width="248dp"
-        android:layout_height="wrap_content"
-        android:text="Click to update user"
-        android:id="@+id/updateUsers" />
+        <Button
+            android:layout_width="248dp"
+            android:layout_height="wrap_content"
+            android:text="Click to Add New User"
+            android:id="@+id/updateUsers"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
 
     <ImageView
         android:layout_width="match_parent"
