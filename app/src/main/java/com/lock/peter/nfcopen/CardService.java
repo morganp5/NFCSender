@@ -47,10 +47,6 @@ public class CardService extends HostApduService {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (!bus.isRegistered(this)) {
-//            bus.register(this);
-            Log.i(TAG, "Registered");
-        }
     }
 
     @Override
@@ -88,7 +84,7 @@ public class CardService extends HostApduService {
             Log.i(TAG, "Responding to APDU with " + accessRequest);
             return ConcatArrays(accessRequestBytes, SELECT_OK_SW);
         } else if ((Arrays.equals(GET_DATA_APDU, commandApdu))) {
-            if (DoorOptions.isPinSet()) {
+            if (DoorOptions.isPinRequired()) {
                 int pin = DoorOptions.getPin();
                 Log.i(TAG, "Sending Pin: " + pin);
                 String stringToSend = pin + " END";

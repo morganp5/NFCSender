@@ -4,25 +4,20 @@ package com.lock.peter.nfcopen;
  * Created by peter on 25/01/15.
  */
 
-import android.content.Context;
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.text.Normalizer;
 
 public class DoorOptions {
 
     private static final Boolean OPTION_FALSE = false;
     private static final Boolean OPTION_TRUE = true;
     private static final String TAG = "DoorOptions";
-    private static Boolean pinSet = OPTION_FALSE;
+    private static Boolean requiresPin = OPTION_FALSE;
     private static String setting = "Open" ;
     private static int pin = 0;
 
-    public static Boolean isPinSet() {
-        return pinSet;
+    public static Boolean isPinRequired() {
+        return requiresPin;
     }
 
     public static int getPin() {
@@ -31,7 +26,7 @@ public class DoorOptions {
 
     public static void setPin(int pin) {
         DoorOptions.pin = pin;
-        pinSet = OPTION_TRUE;
+        requiresPin = OPTION_TRUE;
     }
 
     public static void setDefaults() {
@@ -48,14 +43,17 @@ public class DoorOptions {
     }
 
     public static String prepareNdefPayload(String user, String sessionToken) {
-        JSONObject object = new JSONObject();
+        JSONObject unlockRequest = new JSONObject();
         try {
-            object.put("Name", user);
-            object.put("SessionToken", sessionToken);
-            object.put("Setting", setting);
+            unlockRequest.put("Name", user);
+            unlockRequest.put("SessionToken", sessionToken);
+            unlockRequest.put("Setting", setting);
+            if(isPinRequired()){
+                unlockRequest.put("Pin", getPin());
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return object.toString();
+        return unlockRequest.toString();
     }
 }

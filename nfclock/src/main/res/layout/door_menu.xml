@@ -68,7 +68,6 @@
         android:id="@+id/doorCodeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/selectDoorBtn"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/selectDoor"
         android:layout_toStartOf="@+id/selectDoorBtn"
@@ -78,7 +77,7 @@
         android:layout_marginTop="20dp" />
 
     <Button
-        android:id="@+id/btnSubmit"
+        android:id="@+id/selectDoorBtn"
         android:layout_width="122dp"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/doorCodeET"

@@ -36,10 +36,10 @@ public class MainMenuFragment extends Fragment {
         Events.buttonPressed button = new Events.buttonPressed();
         if (door.getId()==R.id.normaliseDoor) {
             fragmentText = getString(R.string.normaliseDoorText);
-            button.setText(fragmentText);
         } else if (door.getId()==R.id.toggleDoor) {
-            button.setText( fragmentText );
+            fragmentText = getString(R.string.toggleDoorText);
         }
+        button.setText( fragmentText );
         bus.post(button);
     }
 

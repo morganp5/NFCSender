@@ -55,6 +55,7 @@ public class MainMenu extends Activity {
         transaction.commit();
     }
 
+
     public void showPinDialog() {
         LayoutInflater li = LayoutInflater.from(this);
         View promptsView = li.inflate(R.layout.prompts, null);

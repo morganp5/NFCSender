@@ -24,14 +24,17 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * Callback class, invoked when an NFC card is scanned while the device is running in reader mode.
  * <p/>
  * Reader mode can be invoked by calling NfcAdapter
  */
 public class AccessCardReader implements NfcAdapter.ReaderCallback {
-    public interface AccountCallback {
-        public void onAccountReceived(String account);
+
+    public interface AccessAttempt {
+        public void onAccessAttempt(String account);
     }
 
     private static final String TAG = "AccessCardReader";
@@ -48,14 +51,12 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
     private Door door;
     long timeTaken = 0;
 
-    // Weak reference to prevent retain loop. mAccountCallback is responsible for exiting
+    // Weak reference to prevent retain loop. accessAttemptCallback is responsible for exiting
     // foreground mode before it becomes invalid (e.g. during onPause() or onStop()).
-    private WeakReference<AccountCallback> mAccountCallback;
+    private WeakReference<AccessAttempt> accessAttemptCallback;
 
-
-    //TODO Change to use EventBus instead of passing door
-    public AccessCardReader(AccountCallback accountCallback, Door door) {
-        mAccountCallback = new WeakReference<AccountCallback>(accountCallback);
+    public AccessCardReader(AccessAttempt accessAttempt, Door door) {
+        accessAttemptCallback = new WeakReference<AccessAttempt>(accessAttempt);
         this.door = door;
     }
 
@@ -90,9 +91,9 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
                 byte[] statusWord = {result[resultLength - 2], result[resultLength - 1]};
                 byte[] payload = Arrays.copyOf(result, resultLength - 2);
                 if (Arrays.equals(SELECT_OK_SW, statusWord)) {
-                    // The remote NFC device will immediately respond with its stored account number
-                    String accountNumber = new String(payload, "UTF-8");
-                    Log.i(TAG, "Received: " + accountNumber);
+                    // The remote NFC device will immediately respond with its stored access credentials
+                    String acccessCredentials = new String(payload, "UTF-8");
+                    Log.i(TAG, "Received: " + acccessCredentials);
                     // Inform DoorActivity of received account number
                     timeTaken = System.currentTimeMillis();
                     while (!(gotData.contains("END")) && door.isRequiresPin()) {
@@ -110,9 +111,7 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
                             finalGotData = finalGotData + gotData;
                             Log.i(TAG, "Data transferred : " + finalGotData.length());
                         }
-                        Log.i(TAG, "Got call back");
-                        mAccountCallback.get().onAccountReceived(accountNumber);
-
+                        accessAttemptCallback.get().onAccessAttempt(acccessCredentials);
                     }
                 }
             } catch (IOException e) {

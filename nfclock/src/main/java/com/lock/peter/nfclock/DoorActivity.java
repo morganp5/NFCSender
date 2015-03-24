@@ -32,7 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-public class DoorActivity extends Activity implements AccessCardReader.AccountCallback {
+public class DoorActivity extends Activity implements AccessCardReader.AccessAttempt {
 
     public static final String TAG = "DoorActivity";
     public static int READER_FLAGS = NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK;
@@ -63,15 +63,13 @@ public class DoorActivity extends Activity implements AccessCardReader.AccountCa
         showToast("Swipe user phone to add");
     }
 
-    @Override
-    public void onAccountReceived(final String accessAttempt) {
+    public void onAccessAttempt(String accessCredentials) {
         // This callback is run on a background thread, but updates to UI elements must be performed
         // on the UI thread.
-        Log.i(TAG, accessAttempt);
-        Boolean allowed = door.checkIfAuthorised(accessAttempt);
+        Log.i(TAG, accessCredentials);
+        Boolean allowed = door.checkIfAuthorised(accessCredentials);
         try {
-            JSONObject jsonUnlockRequest = new JSONObject(accessAttempt);
-            //TODO Add Toast when user added to parse from eventbus
+            JSONObject jsonUnlockRequest = new JSONObject(accessCredentials);
             if (addNewUser) {
                 String sessionToken = jsonUnlockRequest.getString("SessionToken");
                 Log.i(TAG, "Adding new user");
