@@ -11,6 +11,10 @@ import com.parse.FindCallback;
 import com.parse.ParseRelation;
 import com.parse.ParseRole;
 import com.parse.ParseUser;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +28,6 @@ public class Door {
     private boolean requiresPin = false;
     private final String TAG = "DOOR";
     private String doorName = "";
-    private ArrayList<ParseUser> users = new ArrayList<ParseUser>();
     private final ArrayList<String> groupUsers = new ArrayList<>();
     private ParseRole doorRole;
     private String doorMessage;
@@ -98,16 +101,23 @@ public class Door {
         });
     }
 
-    public boolean checkIfAuthorised(String message) {
-        boolean allowed = false;
-        for (String user : groupUsers) {
-            Log.i(TAG, user);
-            if (message.contains(user)) {
-                allowed = true;
-            }
+    public boolean checkIfAuthorised(JSONObject accessCredentials) throws JSONException{
+        boolean accessGranted = false;
+        String user = accessCredentials.getString("Name");
+        if(groupUsers.contains(user)){
+            accessGranted = true;
         }
-        Log.i(TAG,"User Authorized" + String.valueOf(allowed));
-        return allowed;
+        logAccessAttempt(user,accessGranted);
+        Log.i(TAG,"User Authorized" + String.valueOf(accessGranted));
+        return accessGranted;
+    }
+
+    public void logAccessAttempt(String userName,boolean accessGranted){
+        ParseObject DoorLog = new ParseObject("DoorLog");
+        DoorLog.put("DoorName", getDoorName());
+        DoorLog.put("UserName", userName);
+        DoorLog.put("AccessGranted", accessGranted);
+        DoorLog.saveInBackground();
     }
 
     private boolean doorOpen = false;

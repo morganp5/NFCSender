@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParseException;
+
 import de.greenrobot.event.EventBus;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -45,6 +47,7 @@ public class MainMenu extends Activity {
         Log.i("MM", "Pin not set");
         showPinDialog();
     }
+
     public void onEvent(Events.buttonPressed button) {
         Log.i("MM", "Event Button Press");
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -52,9 +55,18 @@ public class MainMenu extends Activity {
         fragment.onAttach(this);
         transaction.replace(R.id.sample_content_fragment, fragment);
         transaction.addToBackStack("Menu");
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
     }
 
+    public void onEvent(Events.changePasswordEvent changePasswordEvent)  throws ParseException {
+        Log.i("MM", "Pin not set");
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        UpdatePassword fragment = new UpdatePassword();
+        fragment.onAttach(this);
+        transaction.replace(R.id.sample_content_fragment, fragment);
+        transaction.addToBackStack("Menu");
+        transaction.commitAllowingStateLoss();
+    }
 
     public void showPinDialog() {
         LayoutInflater li = LayoutInflater.from(this);

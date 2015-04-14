@@ -8,7 +8,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -19,6 +21,7 @@ import com.parse.ParseObject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import butterknife.OnEditorAction;
 import butterknife.OnItemSelected;
 
 public class DoorMenu extends Activity {
@@ -67,7 +70,7 @@ public class DoorMenu extends Activity {
         if (selectDoorInit) {
             doorPinET.setVisibility(View.VISIBLE);
             doorCodeText.setVisibility(View.VISIBLE);
-            selectDoorButton.setVisibility(View.VISIBLE);
+            //selectDoorButton.setVisibility(View.VISIBLE);
 
         } else selectDoorInit = !selectDoorInit;
     }
@@ -93,5 +96,12 @@ public class DoorMenu extends Activity {
         }
     }
 
+    @OnEditorAction(R.id.doorCodeET)
+    boolean enterDoorPin(TextView v, int actionId, KeyEvent event) {
+        if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+            getDoor();
+         }
+        return false;
+    }
 
 }

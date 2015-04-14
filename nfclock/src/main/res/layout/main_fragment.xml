@@ -37,13 +37,23 @@ limitations under the License.
         android:layout_gravity="center_horizontal">
 
         <Button
-            android:layout_width="248dp"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:text="Click to Add New User"
             android:id="@+id/updateUsers"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true" />
+
+        <Button
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:text="Click To View Door Logs"
+            android:id="@+id/viewLogs"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
+
+
 
     <ImageView
         android:layout_width="match_parent"

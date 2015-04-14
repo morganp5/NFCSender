@@ -5,7 +5,7 @@
     <TextView
         android:id="@+id/txtuser"
         android:layout_width="match_parent"
-        android:layout_height="114dp"
+        android:layout_height="74dp"
         android:textColor="#ffffffff"
         android:textSize="20sp"
         android:background="#009ACE"
@@ -15,7 +15,7 @@
     <FrameLayout
         android:id="@+id/sample_content_fragment"
         android:layout_width="match_parent"
-        android:layout_height="479dp"
+        android:layout_height="491dp"
         android:layout_gravity="center_horizontal|bottom"
         android:background="#009ACE" />
 

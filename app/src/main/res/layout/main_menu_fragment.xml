@@ -1,74 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bootstrap="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#009ACE"
     android:clickable="false"
-    android:orientation="vertical"
->
+    android:orientation="vertical">    <!--   <Button
+
     <Button
-        android:id="@+id/unlockDoor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>-->
+    <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/GridLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#ffffffff"
-        android:minHeight="70dp"
-        android:minWidth="270dp"
-        android:text="Unlock Door"
+
         android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/toggleDoor"
-        android:layout_alignStart="@+id/toggleDoor"
-        android:layout_marginTop="30dp" />
-
-    <Button
-        android:id="@+id/toggleDoor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:background="#ffffffff"
-        android:minHeight="70dp"
-        android:minWidth="270dp"
-        android:text="Toggle Door"
-        android:layout_below="@+id/unlockDoor"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp" />
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:columnCount="2"
+        android:orientation="horizontal"
+        android:rowCount="4"
+        android:transitionGroup="true"
+        android:visibility="visible"
+        android:horizontalSpacing="10dp"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="10dp"
 
-    <Button
-        android:id="@+id/normaliseDoor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/toggleDoor"
-        android:layout_alignStart="@+id/toggleDoor"
-        android:layout_below="@+id/toggleDoor"
-        android:layout_marginBottom="10dp"
-        android:background="#ffffffff"
-        android:minHeight="70dp"
-        android:minWidth="270dp"
-        android:text="Normalise Door"
-        android:layout_marginTop="30dp" />
+        tools:context=".GridXMLActivity">
+
+        <Button
+            android:id="@+id/unlockDoor"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_column="0"
+            android:layout_gravity="start|top"
+            android:layout_marginBottom="10dp"
+            android:layout_row="0"
+            android:background="@drawable/door_in"
+            android:minWidth="270dp"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/editText2"
+            android:layout_width="147dp"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_gravity="center_horizontal"
+            android:layout_row="1"
+            android:text="    Unlock Door"
+            android:textSize="20dp"
+            android:textAlignment="center" />
+
+        <Button
+            android:id="@+id/toggleDoor"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_column="1"
+            android:layout_gravity="left|top"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_row="0"
+            android:background="@drawable/door_open" />
+
+        <TextView
+            android:id="@+id/editText3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_gravity="center_horizontal"
+            android:layout_row="1"
+            android:text="Toggle Door"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/normaliseDoor"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_column="0"
+            android:layout_gravity="left|top"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_row="2"
+            android:background="@drawable/normalise" />
 
 
-    <Button
-        android:id="@+id/changeUserPin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/normaliseDoor"
-        android:layout_alignRight="@+id/normaliseDoor"
-        android:layout_below="@+id/normaliseDoor"
-        android:layout_marginBottom="10dp"
-        android:background="#ffffffff"
-        android:minHeight="70dp"
-        android:minWidth="270dp"
-        android:text="Change User Pin"
-        android:layout_marginTop="30dp" />
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:layout_gravity="center_horizontal"
+            android:layout_row="3"
+            android:text="Normalise Door"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/changeUserPin"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_column="1"
+            android:layout_gravity="left|top"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_row="2"
+            android:background="@drawable/keypad"
+            android:clickable="true" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            android:layout_gravity="center_horizontal"
+            android:layout_row="3"
+            android:text="Change User Pin"
+            android:textSize="20dp" />
+    </GridLayout>
+
 
     <Button
         android:id="@+id/logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/changeUserPin"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="@string/LogoutBtn"
-        android:layout_marginTop="10dp" />
+        android:text="@string/LogoutBtn" />
 
 </RelativeLayout>

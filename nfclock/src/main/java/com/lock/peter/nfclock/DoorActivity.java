@@ -62,14 +62,20 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
         addNewUser = true;
         showToast("Swipe user phone to add");
     }
+    @OnClick(R.id.viewLogs)
+    void viewLogs() {
+        Intent intent = new Intent(getApplicationContext(), ViewLogActivity.class);
+        intent.putExtra("doorName", door.getDoorName());
+        startActivity(intent);
+    }
 
     public void onAccessAttempt(String accessCredentials) {
         // This callback is run on a background thread, but updates to UI elements must be performed
         // on the UI thread.
         Log.i(TAG, accessCredentials);
-        Boolean allowed = door.checkIfAuthorised(accessCredentials);
         try {
             JSONObject jsonUnlockRequest = new JSONObject(accessCredentials);
+            Boolean allowed = door.checkIfAuthorised(jsonUnlockRequest);
             if (addNewUser) {
                 String sessionToken = jsonUnlockRequest.getString("SessionToken");
                 Log.i(TAG, "Adding new user");

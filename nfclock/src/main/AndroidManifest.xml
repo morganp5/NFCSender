@@ -47,6 +47,9 @@
         <activity
             android:name=".AddDoorActivity"
             android:label="AddDoor"></activity>
+        <activity
+            android:name=".ViewLogActivity"
+            android:label="ViewLog"></activity>
     </application>
 
 </manifest>

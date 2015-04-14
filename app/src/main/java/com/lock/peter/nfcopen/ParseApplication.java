@@ -3,8 +3,10 @@ package com.lock.peter.nfcopen;
 import android.app.Application;
 import android.util.Log;
 
+import com.parse.LogInCallback;
 import com.parse.Parse;
 import com.parse.ParseACL;
+import com.parse.ParseException;
 import com.parse.ParseUser;
 
 public class ParseApplication extends Application {
@@ -30,10 +32,22 @@ public class ParseApplication extends Application {
 
         ParseACL.setDefaultACL(defaultACL, true);
     }
-    public static String currentUser(){
+
+    public static String currentUser() {
         ParseUser currentUser = ParseUser.getCurrentUser();
         String username = currentUser.getUsername().toString();
         return username;
     }
 
+    public static boolean updatePassword(String currentPassword, String newPassword) throws ParseException {
+        final ParseUser currentUser = ParseUser.getCurrentUser();
+        ParseUser user = ParseUser.logIn(currentUser.getUsername(), currentPassword);
+        if (user != null) {
+            currentUser.setPassword(newPassword);
+            currentUser.saveInBackground();
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

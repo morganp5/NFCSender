@@ -2,7 +2,9 @@ package com.lock.peter.nfcopen;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,16 +33,23 @@ public class MainMenuFragment extends Fragment {
     }
 
     @OnClick({ R.id.unlockDoor, R.id.normaliseDoor, R.id.toggleDoor })
-    public void pickDoor(Button door) {
+    public void pickDoor(Button selectedButton) {
         String fragmentText = getString(R.string.unlockDoorText);
-        Events.buttonPressed button = new Events.buttonPressed();
-        if (door.getId()==R.id.normaliseDoor) {
+        Events.buttonPressed buttonEvent = new Events.buttonPressed();
+        if (selectedButton.getId()==R.id.normaliseDoor) {
             fragmentText = getString(R.string.normaliseDoorText);
-        } else if (door.getId()==R.id.toggleDoor) {
+        } else if (selectedButton.getId()==R.id.toggleDoor) {
             fragmentText = getString(R.string.toggleDoorText);
         }
-        button.setText( fragmentText );
-        bus.post(button);
+        buttonEvent.setText(fragmentText);
+        Log.d("HHHHH",fragmentText);
+        bus.post(buttonEvent);
+    }
+
+    @OnClick({ R.id.changeUserPin })
+    public void changePasswordFragment() {
+        Events.changePasswordEvent changePasswordEvent = new Events.changePasswordEvent();
+        bus.post(changePasswordEvent);
     }
 
     @OnClick({R.id.logout})

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import butterknife.OnEditorAction;
 
 import android.util.Log;
 import android.view.KeyEvent;
@@ -65,14 +66,14 @@ public class AddDoorActivity extends Activity {
     public void addPin() {
         requiresPin = true;
         doorPinEt.setVisibility(View.VISIBLE);
-        doorPinEt.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
-                    addDoor();
-                }
-                return false;
-            }
-        });
+    }
+
+    @OnEditorAction(R.id.enter_door_pin)
+    boolean enterDoorPin(TextView v, int actionId, KeyEvent event) {
+        if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+            addDoor();
+        }
+        return false;
     }
 
     private void resetForm() {

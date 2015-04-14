@@ -7,6 +7,7 @@ public class Events {
 
     public static class PinRequest {
     }
+    public static class changePasswordEvent{}
 
     public static class buttonPressed {
         String text;
@@ -18,4 +19,5 @@ public class Events {
             this.text = text;
         }
     }
+
 }

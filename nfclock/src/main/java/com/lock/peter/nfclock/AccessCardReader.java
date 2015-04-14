@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 
-import de.greenrobot.event.EventBus;
-
 /**
  * Callback class, invoked when an NFC card is scanned while the device is running in reader mode.
  * <p/>
@@ -59,7 +57,6 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
         accessAttemptCallback = new WeakReference<AccessAttempt>(accessAttempt);
         this.door = door;
     }
-
     /**
      * Callback when a new tag is discovered by the system.
      *
@@ -76,7 +73,6 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
                 isoDep.connect();
                 Log.i(TAG, "Timeout = " + isoDep.getTimeout());
                 isoDep.setTimeout(3600);
-                Log.i(TAG, "Timeout = " + isoDep.getTimeout());
                 Log.i(TAG, "MaxTransceiveLength = " + isoDep.getMaxTransceiveLength());
                 Log.i(TAG, "Requesting remote AID: " + APPLICATION_AID);
                 byte[] selCommand = BuildSelectApdu(APPLICATION_AID);
@@ -104,15 +100,15 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
                         resultLength = result.length;
                         byte[] statusWordNew = {result[resultLength - 2], result[resultLength - 1]};
                         payload = Arrays.copyOf(result, resultLength - 2);
-                        //Will Be Used For Pin Feature
                         if (Arrays.equals(SELECT_OK_SW, statusWordNew)) {
                             gotData = new String(payload, "UTF-8");
                             Log.i(TAG, "Received: " + gotData);
                             finalGotData = finalGotData + gotData;
                             Log.i(TAG, "Data transferred : " + finalGotData.length());
                         }
-                        accessAttemptCallback.get().onAccessAttempt(acccessCredentials);
+
                     }
+                    accessAttemptCallback.get().onAccessAttempt(acccessCredentials);
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Error communicating with card: " + e.toString());
