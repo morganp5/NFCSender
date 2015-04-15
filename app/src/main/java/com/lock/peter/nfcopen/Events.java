@@ -9,15 +9,4 @@ public class Events {
     }
     public static class changePasswordEvent{}
 
-    public static class buttonPressed {
-        String text;
-        public String getText() {
-            return text;
-        }
-
-        public void setText(String text) {
-            this.text = text;
-        }
-    }
-
 }

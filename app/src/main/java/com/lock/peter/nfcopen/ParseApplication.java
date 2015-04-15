@@ -50,4 +50,9 @@ public class ParseApplication extends Application {
             return false;
         }
     }
+    public static void logout(){
+        final ParseUser currentUser = ParseUser.getCurrentUser();
+        currentUser.logOut();
+
+    }
 }

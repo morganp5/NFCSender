@@ -1,6 +1,19 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="nfcsender.UnlockDoor">
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" android:showAsAction="never" />
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+     
+
+    <item
+        android:id="@+id/photo"
+        android:showAsAction="ifRoom|withText"
+        android:actionLayout="@layout/action_bar"
+        android:title="User ID" />
+
+    <item
+        android:id="@+id/logout"
+        android:title="Logout"
+        />
+    <item
+        android:id="@+id/changePassword"
+        android:title="Change Password"
+        />
 </menu>

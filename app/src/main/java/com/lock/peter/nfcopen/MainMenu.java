@@ -5,10 +5,14 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -25,17 +29,14 @@ public class MainMenu extends Activity {
 
     private EventBus bus = EventBus.getDefault();
 
-    @InjectView(R.id.txtuser)
-    TextView userTV;
-
+    @InjectView(R.id.header)
+    TextView tv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_fragment);
         ButterKnife.inject(this);
         bus.register(this);
-        String username = ParseApplication.currentUser();
-        userTV.setText("You are logged in as " + username);
         MainMenuFragment fragment = new MainMenuFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         fragment.onAttach(this);
@@ -48,19 +49,10 @@ public class MainMenu extends Activity {
         showPinDialog();
     }
 
-    public void onEvent(Events.buttonPressed button) {
-        Log.i("MM", "Event Button Press");
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        Fragment fragment = UnlockDoorFragment.newInstance(button.getText());
-        fragment.onAttach(this);
-        transaction.replace(R.id.sample_content_fragment, fragment);
-        transaction.addToBackStack("Menu");
-        transaction.commitAllowingStateLoss();
-    }
-
     public void onEvent(Events.changePasswordEvent changePasswordEvent)  throws ParseException {
         Log.i("MM", "Pin not set");
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        tv.setText("Enter New Password Details");
         UpdatePassword fragment = new UpdatePassword();
         fragment.onAttach(this);
         transaction.replace(R.id.sample_content_fragment, fragment);
@@ -94,5 +86,42 @@ public class MainMenu extends Activity {
                         });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+    /** Callback function */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        /** Create an option menu from res/menu/items.xml */
+        getMenuInflater().inflate(R.menu.menu_unlock_door, menu);
+        /** Get the action view of the menu item whose id is search */
+        View v = (View) menu.findItem(R.id.photo).getActionView();
+        /** Get the edit text from the action view */
+        TextView txtSearch = ( TextView ) v.findViewById(R.id.txt_search);
+        if(ParseApplication.currentUser() !=  null )
+        {
+            txtSearch.setText(ParseApplication.currentUser());
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        super.onOptionsItemSelected(item);
+
+        switch(item.getItemId()){
+            case R.id.logout:
+                ParseApplication.logout();
+                Intent intent = new Intent(MainMenu.this, MainActivity.class);
+                startActivity(intent);
+                break;
+
+            case R.id.changePassword:
+                Events.changePasswordEvent CPE = new Events.changePasswordEvent();
+                bus.post(CPE);
+                break;
+        }
+        return true;
     }
 }
