@@ -20,51 +20,24 @@ limitations under the License.
     android:orientation="vertical"
     android:background="#009ACE">
 
-    <TextView
-        android:id="@+id/doorStatus"
-        android:layout_width="match_parent"
-        android:layout_height="149dp"
-        android:background="#009ACE"
-        android:text="@string/intro_message"
-        android:textIsSelectable="false"
-        android:textSize="40dp"
-        android:textColor="#ffffffff"
-        android:editable="false" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="156dp"
-        android:layout_gravity="center_horizontal">
-
-        <Button
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:text="Click to Add New User"
-            android:id="@+id/updateUsers"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true" />
-
-        <Button
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:text="Click To View Door Logs"
-            android:id="@+id/viewLogs"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true" />
-    </RelativeLayout>
-
-
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/com_act_ui_app_logo"
-        android:background="#009ACE" />
-
     <FrameLayout
         android:id="@+id/sample_content_fragment"
         android:layout_width="match_parent"
         android:layout_height="0px"
-        android:layout_weight="0.57" />
+        android:layout_weight="0.57" >
+
+        <TextView
+            android:id="@+id/doorStatus"
+            android:layout_width="match_parent"
+            android:layout_height="426dp"
+            android:background="@drawable/closed"
+            android:text="@string/intro_message"
+            android:textIsSelectable="false"
+            android:textSize="40dp"
+            android:textColor="#ffffffff"
+            android:editable="false"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal" />
+    </FrameLayout>
 
 </LinearLayout>

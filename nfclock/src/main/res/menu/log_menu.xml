@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+
+    <item
+        android:id="@+id/search"
+        android:actionLayout="@layout/log_search"
+        android:showAsAction="collapseActionView"
+        android:title="Search" />
+
+    <item
+        android:id="@+id/accessGranted"
+        android:showAsAction="collapseActionView"
+        android:title="Access Granted" />
+
+    <item
+        android:id="@+id/accessDenied"
+        android:showAsAction="collapseActionView"
+        android:title="Access Denied" />
+
+
 </menu>

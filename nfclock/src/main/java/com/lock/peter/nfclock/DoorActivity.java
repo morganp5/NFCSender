@@ -21,6 +21,9 @@ import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.util.Log;
 import android.widget.Toast;
@@ -53,16 +56,42 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
         String doorId = intent.getStringExtra("id");
         door = new Door(doorId);
         //Set up the card reader
-        mAccessCardReader = new AccessCardReader(this,door);
+        mAccessCardReader = new AccessCardReader(this, door);
         enableReaderMode();
     }
 
-    @OnClick(R.id.updateUsers)
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        super.onOptionsItemSelected(item);
+
+        switch(item.getItemId()){
+            case R.id.logs:
+                Toast.makeText(getBaseContext(), "You selected Phone", Toast.LENGTH_SHORT).show();
+                viewLogs();
+                break;
+
+            case R.id.user:
+                addUser();
+                break;
+        }
+        return true;
+
+    }
+
     void addUser() {
         addNewUser = true;
         showToast("Swipe user phone to add");
     }
-    @OnClick(R.id.viewLogs)
+
     void viewLogs() {
         Intent intent = new Intent(getApplicationContext(), ViewLogActivity.class);
         intent.putExtra("doorName", door.getDoorName());
@@ -86,15 +115,24 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
                 final String setting = jsonUnlockRequest.getString("Setting");
                 if (setting.equals("Open")) {
                     openCountdown();
+                } else if (setting.equals("Toggle")) {
+                    this.runOnUiThread(new Runnable() {
+                        public void run() {
+                            doorStatus.setText("Door:Toggled Opened");
+                            doorStatus.setBackgroundResource(R.drawable.toggled);
+                        }
+                    });
                 } else {
                     this.runOnUiThread(new Runnable() {
                         public void run() {
-                            doorStatus.setText(door.getDoorMessage(setting));
+                            doorStatus.setText(R.string.intro_message);
+                            doorStatus.setBackgroundResource(R.drawable.closed);
                         }
                     });
-                }
-            }
 
+                }
+
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -104,13 +142,17 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                doorStatus.setBackgroundResource(R.drawable.open);
                 new CountDownTimer(10000, 1000) {
                     public void onTick(long millisUntilFinished) {
-                        doorStatus.setText("Door is unlocked for " + millisUntilFinished / 1000);
+                        doorStatus.setText("Unlocked for:" + millisUntilFinished / 1000);
                     }
+
                     public void onFinish() {
-                        doorStatus.setText("Door is Locked");
+                        doorStatus.setText("Door:Locked");
+                        doorStatus.setBackgroundResource(R.drawable.closed);
                     }
+
                 }.start();
             }
         });

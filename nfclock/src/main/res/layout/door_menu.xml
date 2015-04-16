@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/door_menu"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -10,82 +10,71 @@
     <TextView
         android:id="@+id/textView"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="62dp"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="30dp"
         android:layout_marginTop="10dp"
         android:background="#009ACE"
-        android:text="Select a door to emulate"
+        android:text="Select a Door:"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#ffffffff"
         android:textSize="40dp" />
 
     <Spinner
         android:id="@+id/selectDoor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignBottom="@+id/textView"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/textView"
-        android:layout_toLeftOf="@+id/addDoorButton" />
-    />
+        android:backgroundTint="@android:color/darker_gray"
+        android:backgroundTintMode="src_atop"
+        android:clickable="true"
+        android:focusable="true"
+        android:spinnerMode="dropdown" />
 
-    <Button
-        android:id="@+id/addDoorButton"
-        android:layout_width="124dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/textView"
-        android:layout_gravity="center_horizontal"
-        android:text="Add New Door"
-
-        />
-    <ImageView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="280dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:id="@+id/doorCodeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/selectDoor"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/doorCodeET"
+            android:layout_toStartOf="@+id/selectDoorBtn"
+            android:layout_weight="1"
+            android:text="Enter Door Code"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <EditText
+            android:id="@+id/doorCodeET"
+            android:layout_width="127dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="#fff5f2ff"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:maxWidth="100dp"
+            android:minWidth="100dp"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="284dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_gravity="center_horizontal"
+        android:layout_below="@+id/selectDoorBtn"
         android:background="#009ACE"
         android:src="@drawable/com_act_ui_app_logo" />
 
-    <EditText
-        android:id="@+id/doorCodeET"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/selectDoor"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:maxWidth="100dp"
-        android:minWidth="100dp"
-        android:visibility="invisible"
-        android:inputType="textPassword"
-        android:imeOptions="actionDone"
-        android:singleLine="true"
-        android:layout_marginTop="20dp" />
 
-    <TextView
-        android:id="@+id/doorCodeText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/selectDoor"
-        android:layout_toStartOf="@+id/selectDoorBtn"
-        android:text="Enter Door Code"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:visibility="invisible"
-        android:layout_marginTop="20dp" />
-
-    <Button
-        android:id="@+id/selectDoorBtn"
-        android:layout_width="122dp"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/doorCodeET"
-        android:layout_below="@+id/doorCodeET"
-        android:layout_gravity="center_horizontal"
-        android:text="Select Door"
-        android:layout_marginTop="20dp"
-        android:visibility="invisible" />
-
-
-</RelativeLayout>
+</LinearLayout>

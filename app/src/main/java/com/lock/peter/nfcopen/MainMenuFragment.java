@@ -76,5 +76,6 @@ public class MainMenuFragment extends Fragment {
         unlockDoor.setBackgroundResource(R.drawable.unlockdoor);
         toggleDoor.setBackgroundResource(R.drawable.toggledoor);
         normaliseDoor.setBackgroundResource(R.drawable.normaizedoor);
+        DoorOptions.setDefaults();
     }
 }

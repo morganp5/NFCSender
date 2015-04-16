@@ -17,22 +17,46 @@ import butterknife.InjectView;
 
 public class LogQueryAdapter extends ParseQueryAdapter<ParseObject> {
 
+    @InjectView(R.id.text1)
+    TextView titleTextView;
+
+    @InjectView(R.id.timestamp)
+    TextView timestampView;
+
     public LogQueryAdapter(Context context,final String doorId) {
         super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
             public ParseQuery create() {
                 ParseQuery query = new ParseQuery("DoorLog");
-
+                query.orderByDescending("createdAt");
                 query.whereEqualTo("DoorName", doorId);
                 return query;
             }
         });
     }
 
-    @InjectView(R.id.text1)
-    TextView titleTextView;
+    public LogQueryAdapter(Context context,final String doorId,final String username) {
+        super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
+            public ParseQuery create() {
+                ParseQuery query = new ParseQuery("DoorLog");
+                query.orderByDescending("createdAt");
+                query.whereEqualTo("DoorName", doorId);
+                query.whereEqualTo("UserName", username);
+                return query;
+            }
+        });
+    }
+    public LogQueryAdapter(Context context,final String doorId,final Boolean allowed) {
+        super(context, new ParseQueryAdapter.QueryFactory<ParseObject>() {
+            public ParseQuery create() {
+                ParseQuery query = new ParseQuery("DoorLog");
+                query.orderByDescending("createdAt");
+                query.whereEqualTo("DoorName", doorId);
+                query.whereEqualTo("AccessGranted", allowed);
+                return query;
+            }
+        });
+    }
 
-    @InjectView(R.id.timestamp)
-    TextView timestampView;
     // Customize the layout by overriding getItemView
     @Override
     public View getItemView(ParseObject object, View v, ViewGroup parent) {

@@ -1,6 +1,7 @@
 package com.lock.peter.nfclock;
 
 import android.util.Log;
+
 import com.parse.GetCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseACL;
@@ -54,9 +55,9 @@ public class Door {
         );
     }
 
-    public void addAllowedUser(String sessionToken){
+    public void addAllowedUser(String sessionToken) {
         ParseUser user = new ParseUser();
-        user.becomeInBackground(sessionToken,new LogInCallback() {
+        user.becomeInBackground(sessionToken, new LogInCallback() {
             public void done(ParseUser user, ParseException e) {
                 if (e == null && user != null) {
                     Log.i(TAG, "The sesion token user is " + user.getUsername());
@@ -64,9 +65,9 @@ public class Door {
                     doorRole.saveInBackground();
                     groupUsers.add(user.getUsername());
                 } else if (user == null) {
-                    Log.i(TAG,"Login Failed User Is Null");
+                    Log.i(TAG, "Login Failed User Is Null");
                 } else {
-                    Log.i(TAG,"Login Failed ");
+                    Log.i(TAG, "Login Failed ");
                 }
             }
         });
@@ -81,7 +82,7 @@ public class Door {
             public void done(List<ParseRole> objects, ParseException e) {
                 if (e == null) {
                     for (ParseRole role : objects) {
-                        doorRole = role ;
+                        doorRole = role;
                         ParseRelation<ParseUser> usersRelation = role.getRelation("users");
                         ParseQuery<ParseUser> usersQuery = usersRelation.getQuery();
                         usersQuery.findInBackground(new FindCallback<ParseUser>() {
@@ -101,18 +102,18 @@ public class Door {
         });
     }
 
-    public boolean checkIfAuthorised(JSONObject accessCredentials) throws JSONException{
+    public boolean checkIfAuthorised(JSONObject accessCredentials) throws JSONException {
         boolean accessGranted = false;
         String user = accessCredentials.getString("Name");
-        if(groupUsers.contains(user)){
+        if (groupUsers.contains(user)) {
             accessGranted = true;
         }
-        logAccessAttempt(user,accessGranted);
-        Log.i(TAG,"User Authorized" + String.valueOf(accessGranted));
+        logAccessAttempt(user, accessGranted);
+        Log.i(TAG, "User Authorized" + String.valueOf(accessGranted));
         return accessGranted;
     }
 
-    public void logAccessAttempt(String userName,boolean accessGranted){
+    public void logAccessAttempt(String userName, boolean accessGranted) {
         ParseObject DoorLog = new ParseObject("DoorLog");
         DoorLog.put("DoorName", getDoorName());
         DoorLog.put("UserName", userName);
@@ -135,12 +136,10 @@ public class Door {
     }
 
     public String getDoorMessage(String setting) {
-        if(setting.equals("Toggle"))
-        {
+        if (setting.equals("Toggle")) {
             setDoorOpen(true);
             setDoorMessage("Door is Toggled Opened");
-        }
-        else {
+        } else {
             setDoorOpen(false);
             setDoorMessage("Door is Locked");
         }

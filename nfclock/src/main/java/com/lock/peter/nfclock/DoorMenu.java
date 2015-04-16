@@ -9,12 +9,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parse.ParseObject;
 
@@ -30,9 +34,6 @@ public class DoorMenu extends Activity {
 
     @InjectView(R.id.selectDoor)
     Spinner selectDoor;
-
-    @InjectView(R.id.selectDoorBtn)
-    Button selectDoorButton;
 
     @InjectView(R.id.doorCodeET)
     EditText doorPinET;
@@ -70,18 +71,15 @@ public class DoorMenu extends Activity {
         if (selectDoorInit) {
             doorPinET.setVisibility(View.VISIBLE);
             doorCodeText.setVisibility(View.VISIBLE);
-            //selectDoorButton.setVisibility(View.VISIBLE);
 
         } else selectDoorInit = !selectDoorInit;
     }
 
-    @OnClick(R.id.addDoorButton)
     public void addNewDoor() {
         Intent intent = new Intent(getApplicationContext(), AddDoorActivity.class);
         startActivity(intent);
     }
 
-    @OnClick(R.id.selectDoorBtn)
     public void getDoor() {
         ParseObject door = (ParseObject) selectDoor.getSelectedItem();
         String doorPin = door.get("Pin").toString();
@@ -102,6 +100,27 @@ public class DoorMenu extends Activity {
             getDoor();
          }
         return false;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.new_door_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        super.onOptionsItemSelected(item);
+
+        switch(item.getItemId()){
+            case R.id.newdoor:
+                addNewDoor();
+                break;
+        }
+        return true;
+
     }
 
 }
