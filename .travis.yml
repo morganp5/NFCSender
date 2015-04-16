@@ -10,7 +10,7 @@ android:
 
 script: ./gradlew build assembleDebug
 before_deploy: cp app/build/outputs/apk/app-debug.apk app/build/outputs/apk/NFCSender.apk
-
+before_deploy: cp nfclock/build/outputs/apk/app-debug.apk app/build/outputs/apk/NFCLock.apk
 deploy:
   provider: releases
   api_key: 76c4ef036981990ed14bcd9562985fe7221a0a35
