@@ -31,12 +31,22 @@ public class MainMenu extends Activity {
 
     @InjectView(R.id.header)
     TextView tv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_fragment);
+        if(ParseApplication.currentUser() ==  null )
+        {
+            try {
+                ParseApplication.loginAnon();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
         ButterKnife.inject(this);
         bus.register(this);
+
         MainMenuFragment fragment = new MainMenuFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         fragment.onAttach(this);
@@ -49,7 +59,7 @@ public class MainMenu extends Activity {
         showPinDialog();
     }
 
-    public void onEvent(Events.changePasswordEvent changePasswordEvent)  throws ParseException {
+    public void onEvent(Events.changePasswordEvent changePasswordEvent) throws ParseException {
         Log.i("MM", "Pin not set");
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         tv.setText("Enter New Password Details");
@@ -75,7 +85,7 @@ public class MainMenu extends Activity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 DoorOptions.setPin(Integer.parseInt(userInput.getText().toString()));
-                                Toast.makeText(getApplicationContext(),"Rescan Phone", Toast.LENGTH_SHORT);
+                                Toast.makeText(getApplicationContext(), "Rescan Phone", Toast.LENGTH_SHORT);
                             }
                         })
                 .setNegativeButton("Cancel",
@@ -88,7 +98,9 @@ public class MainMenu extends Activity {
         alertDialog.show();
     }
 
-    /** Callback function */
+    /**
+     * Callback function
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         /** Create an option menu from res/menu/items.xml */
@@ -96,11 +108,8 @@ public class MainMenu extends Activity {
         /** Get the action view of the menu item whose id is search */
         View v = (View) menu.findItem(R.id.photo).getActionView();
         /** Get the edit text from the action view */
-        TextView txtSearch = ( TextView ) v.findViewById(R.id.txt_search);
-        if(ParseApplication.currentUser() !=  null )
-        {
-            txtSearch.setText(ParseApplication.currentUser());
-        }
+        TextView txtSearch = (TextView) v.findViewById(R.id.txt_search);
+        txtSearch.setText(ParseApplication.currentUser());
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -110,7 +119,7 @@ public class MainMenu extends Activity {
 
         super.onOptionsItemSelected(item);
 
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.logout:
                 ParseApplication.logout();
                 Intent intent = new Intent(MainMenu.this, MainActivity.class);

@@ -34,9 +34,16 @@ public class ParseApplication extends Application {
     }
 
     public static String currentUser() {
-        ParseUser currentUser = ParseUser.getCurrentUser();
-        String username = currentUser.getUsername().toString();
+        String username="";
+        if(ParseUser.getCurrentUser().getUsername() !=  null ){
+            ParseUser currentUser = ParseUser.getCurrentUser();
+            username = currentUser.getUsername().toString();
+        }
         return username;
+    }
+
+    public static void loginAnon() throws  ParseException{
+        ParseUser currentUser = ParseUser.logIn("test", "test");
     }
 
     public static boolean updatePassword(String currentPassword, String newPassword) throws ParseException {

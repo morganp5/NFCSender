@@ -111,45 +111,63 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
                 door.addAllowedUser(sessionToken);
                 addNewUser = false;
             }
-            if (allowed) {
+            else if (allowed) {
                 final String setting = jsonUnlockRequest.getString("Setting");
-                if (setting.equals("Open")) {
-                    openCountdown();
-                } else if (setting.equals("Toggle")) {
-                    this.runOnUiThread(new Runnable() {
-                        public void run() {
-                            doorStatus.setText("Door:Toggled Opened");
-                            doorStatus.setBackgroundResource(R.drawable.toggled);
-                        }
-                    });
-                } else {
-                    this.runOnUiThread(new Runnable() {
-                        public void run() {
-                            doorStatus.setText(R.string.intro_message);
-                            doorStatus.setBackgroundResource(R.drawable.closed);
-                        }
-                    });
-
-                }
-
+                accessGranted(setting);
             }
+            else
+                openCountdown(false);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void openCountdown() {
+
+    public void accessGranted(String setting){
+
+        if (setting.equals("Open")) {
+            openCountdown(true);
+        } else if (setting.equals("Toggle")) {
+            this.runOnUiThread(new Runnable() {
+                public void run() {
+                    doorStatus.setText("Door:Toggled Opened");
+                    doorStatus.setBackgroundResource(R.drawable.toggled);
+                }
+            });
+        } else {
+            this.runOnUiThread(new Runnable() {
+                public void run() {
+                    doorStatus.setText(R.string.intro_message);
+                    doorStatus.setBackgroundResource(R.drawable.closed);
+                }
+            });
+        }
+    }
+
+
+    public void openCountdown(final boolean allowed) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                doorStatus.setBackgroundResource(R.drawable.open);
                 new CountDownTimer(10000, 1000) {
+                    boolean first = true;
                     public void onTick(long millisUntilFinished) {
-                        doorStatus.setText("Unlocked for:" + millisUntilFinished / 1000);
+                        if (allowed) {
+                            if (first) {
+                                first = false;
+                                doorStatus.setBackgroundResource(R.drawable.open);
+                            }
+                            doorStatus.setText("Unlocked for:" + millisUntilFinished / 1000);
+                        } else {
+                            doorStatus.setText("Access Denied");
+                            if(first){
+                                doorStatus.setBackgroundResource(R.drawable.denied);
+                            }
+                        }
                     }
-
                     public void onFinish() {
                         doorStatus.setText("Door:Locked");
+                        first = true;
                         doorStatus.setBackgroundResource(R.drawable.closed);
                     }
 

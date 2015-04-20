@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: "sonar-runner"
+apply plugin: 'sonar'
 
 android {
     compileSdkVersion 21
@@ -27,3 +29,16 @@ dependencies {
     compile 'com.jakewharton:butterknife:5.1.1'
 
 }
+
+sonarRunner(){
+    sonarProperties {
+        property "sonar.host.url", "http://sonar.chewy.ianduffy.ie"
+
+        //I added these properties to my gradle.build
+        property "sonar.projectKey", "NFClockSonar"
+        property "sonar.projectName", "NFClockSonar"
+        property "sonar.projectVersion", "V1.0"
+        property "sonar.language", "java"
+        property "sonar.sources", "src/main/java"
+        property "sonar.binaries", "build"
+    }}

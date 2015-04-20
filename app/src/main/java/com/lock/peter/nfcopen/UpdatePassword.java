@@ -52,11 +52,13 @@ public class UpdatePassword extends Fragment {
         if(confirmNewPassword.equals(newPassword)){
             try {
                 ParseApplication.updatePassword(currentPassword,newPassword);
+
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
-        else {//TODO make toast to inform of mismatched passwords}
+        else {
+            Toast.makeText(getActivity(), "Current Passwords Do Not Match", Toast.LENGTH_SHORT);
         }
     }
 
