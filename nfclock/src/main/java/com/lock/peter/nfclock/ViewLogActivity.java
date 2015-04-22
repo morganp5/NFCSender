@@ -30,6 +30,10 @@ public class ViewLogActivity extends Activity {
     @InjectView(R.id.list)
     ListView listView;
 
+    public ParseQueryAdapter getParseQueryAdapter(){
+        return mainAdapter;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 

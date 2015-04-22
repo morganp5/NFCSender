@@ -2,14 +2,12 @@ package com.lock.peter.nfcopen;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,30 +18,21 @@ import android.widget.Toast;
 
 import com.parse.ParseException;
 
-import de.greenrobot.event.EventBus;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.greenrobot.event.EventBus;
 
 
 public class MainMenu extends Activity {
 
-    private EventBus bus = EventBus.getDefault();
-
     @InjectView(R.id.header)
     TextView tv;
+    private EventBus bus = EventBus.getDefault();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_fragment);
-        if(ParseApplication.currentUser() ==  null )
-        {
-            try {
-                ParseApplication.loginAnon();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
         ButterKnife.inject(this);
         bus.register(this);
 
@@ -60,12 +49,11 @@ public class MainMenu extends Activity {
     }
 
     public void onEvent(Events.changePasswordEvent changePasswordEvent) throws ParseException {
-        Log.i("MM", "Pin not set");
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         tv.setText("Enter New Password Details");
         UpdatePassword fragment = new UpdatePassword();
         fragment.onAttach(this);
-        transaction.replace(R.id.sample_content_fragment, fragment);
+        transaction.replace(R.id.sample_content_fragment, fragment, "updatePassword");
         transaction.addToBackStack("Menu");
         transaction.commitAllowingStateLoss();
     }
@@ -85,7 +73,7 @@ public class MainMenu extends Activity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 DoorOptions.setPin(Integer.parseInt(userInput.getText().toString()));
-                                Toast.makeText(getApplicationContext(), "Rescan Phone", Toast.LENGTH_SHORT);
+                                Toast.makeText(getApplicationContext(), "Rescan Phone", Toast.LENGTH_SHORT).show();
                             }
                         })
                 .setNegativeButton("Cancel",

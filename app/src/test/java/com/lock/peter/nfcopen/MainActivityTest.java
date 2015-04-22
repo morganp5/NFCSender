@@ -7,18 +7,28 @@ import com.parse.ui.ParseLoginActivity;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.annotation.Config;
 
 import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by peter on 20/04/15.
+ *
+ *
  */
+
+/*
+@RunWith(RobolectricGradleTestRunner.class)
+@Config(constants = BuildConfig.class, emulateSdk = 21 ,manifest = "./src/main/AndroidManifest.xml")
+*/
+
 public class MainActivityTest {
-    private ParseLoginActivity activity;
     private EditText changeUserPinBtn;
 
-
+/*
     @Before
     public void setup() throws Exception{
         activity = Robolectric.buildActivity(ParseLoginActivity.class).create().visible().get();
@@ -29,5 +39,5 @@ public class MainActivityTest {
     public void buttonsNotNull() throws Exception{
         assertNotNull(changeUserPinBtn);
     }
-
+*/
 }

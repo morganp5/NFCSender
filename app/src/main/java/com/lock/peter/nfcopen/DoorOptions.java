@@ -13,7 +13,7 @@ public class DoorOptions {
     private static final Boolean OPTION_TRUE = true;
     private static final String TAG = "DoorOptions";
     private static Boolean requiresPin = OPTION_FALSE;
-    private static String setting = "Open" ;
+    private static String setting = "Open";
     private static int pin = 0;
 
     public static Boolean isPinRequired() {
@@ -30,16 +30,19 @@ public class DoorOptions {
     }
 
     public static void setDefaults() {
-            setting = "Open";
+        setting = "Open";
     }
 
     public static void setToggle() {
-            setting = "Toggle";
+        setting = "Toggle";
     }
 
-    public static void setNormalise() {
-            setting = "Normalise";
+    public static void setNormalize() {
+        setting = "Normalize";
+    }
 
+    public static String getCurrentSetting() {
+        return setting;
     }
 
     public static String prepareNdefPayload(String user, String sessionToken) {
@@ -48,7 +51,7 @@ public class DoorOptions {
             unlockRequest.put("Name", user);
             unlockRequest.put("SessionToken", sessionToken);
             unlockRequest.put("Setting", setting);
-            if(isPinRequired()){
+            if (isPinRequired()) {
                 unlockRequest.put("Pin", getPin());
             }
         } catch (JSONException e) {

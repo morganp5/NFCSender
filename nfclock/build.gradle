@@ -1,13 +1,15 @@
 apply plugin: 'com.android.application'
 apply plugin: "sonar-runner"
 apply plugin: 'sonar'
+apply plugin: 'jacoco'
+
 
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.1"
 
     defaultConfig {
-        applicationId "com.lock.peter.myapplication"
+        //applicationId "com.lock.peter.myapplication"
         minSdkVersion 19
         targetSdkVersion 21
         versionCode 1
@@ -28,9 +30,51 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.0'
     compile 'com.jakewharton:butterknife:5.1.1'
 
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.easytesting:fest:1.0.16'
+    testCompile 'com.squareup:fest-android:1.0.8'
+    testCompile('org.robolectric:robolectric:3.0-rc2') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+
+    }
+
 }
 
-sonarRunner(){
+jacoco {
+    toolVersion = "0.7.1.201405082137"
+}
+
+def coverageSourceDirs = [
+        '../app/src/main/java'
+]
+
+task jacocoTestReport(type: JacocoReport, dependsOn: "testDebug") {
+    group = "Reporting"
+
+    description = "Generate Jacoco coverage reports"
+
+    classDirectories = fileTree(
+            dir: '../app/build/intermediates/classes/debug',
+            excludes: ['**/R.class',
+                       '**/R$*.class',
+                       '**/*$ViewInjector*.*',
+                       '**/BuildConfig.*',
+                       '**/Manifest*.*']
+    )
+
+    additionalSourceDirs = files(coverageSourceDirs)
+    sourceDirectories = files(coverageSourceDirs)
+    executionData = files('../app/build/jacoco/testDebug.exec')
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+
+sonarRunner() {
     sonarProperties {
         property "sonar.host.url", "http://sonar.chewy.ianduffy.ie"
 
@@ -41,4 +85,5 @@ sonarRunner(){
         property "sonar.language", "java"
         property "sonar.sources", "src/main/java"
         property "sonar.binaries", "build"
-    }}
+    }
+}

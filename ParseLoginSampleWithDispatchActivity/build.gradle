@@ -1,0 +1,25 @@
+apply plugin: 'android'
+
+dependencies {
+    compile 'com.facebook.android:facebook-android-sdk:3.21.1'
+    compile project(':ParseLoginUI')
+    compile 'com.android.support:support-v4:21.0.0'
+}
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            res.srcDirs = ['res']
+        }
+    }
+}

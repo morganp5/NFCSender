@@ -22,7 +22,7 @@
 package com.parse.ui;
 
 public interface ParseOnLoadingListener {
-  public void onLoadingStart(boolean showSpinner);
+    public void onLoadingStart(boolean showSpinner);
 
-  public void onLoadingFinish();
+    public void onLoadingFinish();
 }

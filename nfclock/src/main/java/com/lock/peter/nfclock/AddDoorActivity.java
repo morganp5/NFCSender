@@ -8,7 +8,6 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
 
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;

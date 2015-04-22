@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -20,15 +19,13 @@ import de.greenrobot.event.EventBus;
  * Created by peter on 13/04/15.
  */
 public class UpdatePassword extends Fragment {
-    private EventBus bus = EventBus.getDefault();
-
     @InjectView(R.id.current_password)
     EditText currentPasswordEt;
     @InjectView(R.id.new_password)
     EditText newPasswordEt;
     @InjectView(R.id.confirm__new_password)
     EditText confirmNewPasswordEt;
-
+    private EventBus bus = EventBus.getDefault();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,20 +42,22 @@ public class UpdatePassword extends Fragment {
 
 
     @OnClick(R.id.update_password)
-    void changePassword()  {
+    void changePassword() {
         String currentPassword = currentPasswordEt.getText().toString();
         String newPassword = newPasswordEt.getText().toString();
         String confirmNewPassword = confirmNewPasswordEt.getText().toString();
-        if(confirmNewPassword.equals(newPassword)){
+        if (confirmNewPassword.equals(newPassword)) {
             try {
-                ParseApplication.updatePassword(currentPassword,newPassword);
-
+                boolean success = ParseApplication.updatePassword(currentPassword, newPassword);
+                if (success) {
+                    Toast.makeText(getActivity(), "Password Changed", Toast.LENGTH_SHORT).show();
+                }
             } catch (ParseException e) {
                 e.printStackTrace();
+                Toast.makeText(getActivity(), "Current Password Incorrect ", Toast.LENGTH_SHORT).show();
             }
-        }
-        else {
-            Toast.makeText(getActivity(), "Current Passwords Do Not Match", Toast.LENGTH_SHORT);
+        } else {
+            Toast.makeText(getActivity(), "New Passwords Do Not Match", Toast.LENGTH_SHORT).show();
         }
     }
 

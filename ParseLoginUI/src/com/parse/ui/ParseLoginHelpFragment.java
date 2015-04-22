@@ -41,110 +41,110 @@ import com.parse.RequestPasswordResetCallback;
  */
 public class ParseLoginHelpFragment extends ParseLoginFragmentBase implements OnClickListener {
 
-  public interface ParseOnLoginHelpSuccessListener {
-    public void onLoginHelpSuccess();
-  }
-
-  private TextView instructionsTextView;
-  private EditText emailField;
-  private Button submitButton;
-  private boolean emailSent = false;
-  private ParseOnLoginHelpSuccessListener onLoginHelpSuccessListener;
-
-  private ParseLoginConfig config;
-
-  private static final String LOG_TAG = "ParseLoginHelpFragment";
-
-  public static ParseLoginHelpFragment newInstance(Bundle configOptions) {
-    ParseLoginHelpFragment loginHelpFragment = new ParseLoginHelpFragment();
-    loginHelpFragment.setArguments(configOptions);
-    return loginHelpFragment;
-  }
-
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup parent,
-                           Bundle savedInstanceState) {
-    config = ParseLoginConfig.fromBundle(getArguments(), getActivity());
-
-    View v = inflater.inflate(R.layout.com_parse_ui_parse_login_help_fragment,
-        parent, false);
-    ImageView appLogo = (ImageView) v.findViewById(R.id.app_logo);
-    instructionsTextView = (TextView) v
-        .findViewById(R.id.login_help_instructions);
-    emailField = (EditText) v.findViewById(R.id.login_help_email_input);
-    submitButton = (Button) v.findViewById(R.id.login_help_submit);
-
-    if (appLogo != null && config.getAppLogo() != null) {
-      appLogo.setImageResource(config.getAppLogo());
+    public interface ParseOnLoginHelpSuccessListener {
+        public void onLoginHelpSuccess();
     }
 
-    submitButton.setOnClickListener(this);
-    return v;
-  }
+    private TextView instructionsTextView;
+    private EditText emailField;
+    private Button submitButton;
+    private boolean emailSent = false;
+    private ParseOnLoginHelpSuccessListener onLoginHelpSuccessListener;
 
-  @Override
-  public void onAttach(Activity activity) {
-    super.onAttach(activity);
+    private ParseLoginConfig config;
 
-    if (activity instanceof ParseOnLoadingListener) {
-      onLoadingListener = (ParseOnLoadingListener) activity;
-    } else {
-      throw new IllegalArgumentException(
-          "Activity must implemement ParseOnLoadingListener");
+    private static final String LOG_TAG = "ParseLoginHelpFragment";
+
+    public static ParseLoginHelpFragment newInstance(Bundle configOptions) {
+        ParseLoginHelpFragment loginHelpFragment = new ParseLoginHelpFragment();
+        loginHelpFragment.setArguments(configOptions);
+        return loginHelpFragment;
     }
 
-    if (activity instanceof ParseOnLoginHelpSuccessListener) {
-      onLoginHelpSuccessListener = (ParseOnLoginHelpSuccessListener) activity;
-    } else {
-      throw new IllegalArgumentException(
-          "Activity must implemement ParseOnLoginHelpSuccessListener");
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup parent,
+                             Bundle savedInstanceState) {
+        config = ParseLoginConfig.fromBundle(getArguments(), getActivity());
+
+        View v = inflater.inflate(R.layout.com_parse_ui_parse_login_help_fragment,
+                parent, false);
+        ImageView appLogo = (ImageView) v.findViewById(R.id.app_logo);
+        instructionsTextView = (TextView) v
+                .findViewById(R.id.login_help_instructions);
+        emailField = (EditText) v.findViewById(R.id.login_help_email_input);
+        submitButton = (Button) v.findViewById(R.id.login_help_submit);
+
+        if (appLogo != null && config.getAppLogo() != null) {
+            appLogo.setImageResource(config.getAppLogo());
+        }
+
+        submitButton.setOnClickListener(this);
+        return v;
     }
-  }
 
-  @Override
-  public void onClick(View v) {
-    if (!emailSent) {
-      String email = emailField.getText().toString();
-      if (email.length() == 0) {
-        showToast(R.string.com_parse_ui_no_email_toast);
-      } else {
-        loadingStart();
-        ParseUser.requestPasswordResetInBackground(email,
-            new RequestPasswordResetCallback() {
-              @Override
-              public void done(ParseException e) {
-                if (isActivityDestroyed()) {
-                  return;
-                }
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
 
-                loadingFinish();
-                if (e == null) {
-                  instructionsTextView
-                      .setText(R.string.com_parse_ui_login_help_email_sent);
-                  emailField.setVisibility(View.INVISIBLE);
-                  submitButton
-                      .setText(R.string.com_parse_ui_login_help_login_again_button_label);
-                  emailSent = true;
-                } else {
-                  debugLog(getString(R.string.com_parse_ui_login_warning_password_reset_failed) +
-                      e.toString());
-                  if (e.getCode() == ParseException.INVALID_EMAIL_ADDRESS ||
-                      e.getCode() == ParseException.EMAIL_NOT_FOUND) {
-                    showToast(R.string.com_parse_ui_invalid_email_toast);
-                  } else {
-                    showToast(R.string.com_parse_ui_login_help_submit_failed_unknown);
-                  }
-                }
-              }
-            });
-      }
-    } else {
-      onLoginHelpSuccessListener.onLoginHelpSuccess();
+        if (activity instanceof ParseOnLoadingListener) {
+            onLoadingListener = (ParseOnLoadingListener) activity;
+        } else {
+            throw new IllegalArgumentException(
+                    "Activity must implemement ParseOnLoadingListener");
+        }
+
+        if (activity instanceof ParseOnLoginHelpSuccessListener) {
+            onLoginHelpSuccessListener = (ParseOnLoginHelpSuccessListener) activity;
+        } else {
+            throw new IllegalArgumentException(
+                    "Activity must implemement ParseOnLoginHelpSuccessListener");
+        }
     }
-  }
 
-  @Override
-  protected String getLogTag() {
-    return LOG_TAG;
-  }
+    @Override
+    public void onClick(View v) {
+        if (!emailSent) {
+            String email = emailField.getText().toString();
+            if (email.length() == 0) {
+                showToast(R.string.com_parse_ui_no_email_toast);
+            } else {
+                loadingStart();
+                ParseUser.requestPasswordResetInBackground(email,
+                        new RequestPasswordResetCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (isActivityDestroyed()) {
+                                    return;
+                                }
+
+                                loadingFinish();
+                                if (e == null) {
+                                    instructionsTextView
+                                            .setText(R.string.com_parse_ui_login_help_email_sent);
+                                    emailField.setVisibility(View.INVISIBLE);
+                                    submitButton
+                                            .setText(R.string.com_parse_ui_login_help_login_again_button_label);
+                                    emailSent = true;
+                                } else {
+                                    debugLog(getString(R.string.com_parse_ui_login_warning_password_reset_failed) +
+                                            e.toString());
+                                    if (e.getCode() == ParseException.INVALID_EMAIL_ADDRESS ||
+                                            e.getCode() == ParseException.EMAIL_NOT_FOUND) {
+                                        showToast(R.string.com_parse_ui_invalid_email_toast);
+                                    } else {
+                                        showToast(R.string.com_parse_ui_login_help_submit_failed_unknown);
+                                    }
+                                }
+                            }
+                        });
+            }
+        } else {
+            onLoginHelpSuccessListener.onLoginHelpSuccess();
+        }
+    }
+
+    @Override
+    protected String getLogTag() {
+        return LOG_TAG;
+    }
 }

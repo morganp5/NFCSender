@@ -22,9 +22,9 @@ import android.util.Log;
 
 import com.parse.ParseUser;
 
-import de.greenrobot.event.EventBus;
-
 import java.util.Arrays;
+
+import de.greenrobot.event.EventBus;
 
 public class CardService extends HostApduService {
     private static final String TAG = "CardService";
@@ -43,64 +43,6 @@ public class CardService extends HostApduService {
     private static final byte[] GET_DATA_APDU = BuildGetDataApdu();
 
     private EventBus bus = EventBus.getDefault();
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
-
-    @Override
-    public void onDeactivated(int reason) {
-        Log.i(TAG, "deactivated");
-    }
-
-    @Override
-    public void onDestroy() {
-        Log.i(TAG, "Destroyed");
-    }
-
-    /**
-     * This method will be called when a command APDU has been received from a remote device. A
-     * response APDU can be provided directly by returning a byte-array in this method. In general
-     * response APDUs must be sent as quickly as possible, given the fact that the user is likely
-     * holding his device over an NFC reader when this method is called.
-     * <p/>
-     *
-     * @param commandApdu The APDU that received from the remote device
-     * @param extras      A bundle containing extra data. May be null.
-     * @return a byte-array containing the response APDU, or null if no response APDU can be sent
-     * at this point.
-     */
-
-    @Override
-    public byte[] processCommandApdu(byte[] commandApdu, Bundle extras) {
-        Log.i(TAG, "processCommandApdu");
-        ParseUser currentUser = ParseUser.getCurrentUser();
-        String username = currentUser.getUsername();
-        String userSessionToken = currentUser.getSessionToken();
-        if (Arrays.equals(SELECT_APDU, commandApdu)) {
-            String accessRequest = DoorOptions.prepareNdefPayload(username,userSessionToken);
-            byte[] accessRequestBytes = accessRequest.getBytes();
-            Log.i(TAG, "Responding to APDU with " + accessRequest);
-            return ConcatArrays(accessRequestBytes, SELECT_OK_SW);
-        } else if ((Arrays.equals(GET_DATA_APDU, commandApdu))) {
-            if (DoorOptions.isPinRequired()) {
-                int pin = DoorOptions.getPin();
-                Log.i(TAG, "Sending Pin: " + pin);
-                String stringToSend = pin + " END";
-                byte[] accountBytes = stringToSend.getBytes();
-                Log.i(TAG, stringToSend);
-                return (ConcatArrays(accountBytes, SELECT_OK_SW));
-            } else {
-                Log.i(TAG, "Requesting Door Pin");
-                Events.PinRequest pr = new Events.PinRequest();
-                bus.post(pr);
-                return null;
-            }
-        } else {
-            return UNKNOWN_CMD_SW;
-        }
-    }
 
     /**
      * Build APDU for SELECT AID command. This command indicates which service a reader is
@@ -185,5 +127,63 @@ public class CardService extends HostApduService {
             offset += array.length;
         }
         return result;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
+
+    @Override
+    public void onDeactivated(int reason) {
+        Log.i(TAG, "deactivated");
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.i(TAG, "Destroyed");
+    }
+
+    /**
+     * This method will be called when a command APDU has been received from a remote device. A
+     * response APDU can be provided directly by returning a byte-array in this method. In general
+     * response APDUs must be sent as quickly as possible, given the fact that the user is likely
+     * holding his device over an NFC reader when this method is called.
+     * <p/>
+     *
+     * @param commandApdu The APDU that received from the remote device
+     * @param extras      A bundle containing extra data. May be null.
+     * @return a byte-array containing the response APDU, or null if no response APDU can be sent
+     * at this point.
+     */
+
+    @Override
+    public byte[] processCommandApdu(byte[] commandApdu, Bundle extras) {
+        Log.i(TAG, "processCommandApdu");
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        String username = currentUser.getUsername();
+        String userSessionToken = currentUser.getSessionToken();
+        if (Arrays.equals(SELECT_APDU, commandApdu)) {
+            String accessRequest = DoorOptions.prepareNdefPayload(username, userSessionToken);
+            byte[] accessRequestBytes = accessRequest.getBytes();
+            Log.i(TAG, "Responding to APDU with " + accessRequest);
+            return ConcatArrays(accessRequestBytes, SELECT_OK_SW);
+        } else if ((Arrays.equals(GET_DATA_APDU, commandApdu))) {
+            if (DoorOptions.isPinRequired()) {
+                int pin = DoorOptions.getPin();
+                Log.i(TAG, "Sending Pin: " + pin);
+                String stringToSend = pin + " END";
+                byte[] accountBytes = stringToSend.getBytes();
+                Log.i(TAG, stringToSend);
+                return (ConcatArrays(accountBytes, SELECT_OK_SW));
+            } else {
+                Log.i(TAG, "Requesting Door Pin");
+                Events.PinRequest pr = new Events.PinRequest();
+                bus.post(pr);
+                return null;
+            }
+        } else {
+            return UNKNOWN_CMD_SW;
+        }
     }
 }

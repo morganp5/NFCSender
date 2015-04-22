@@ -5,29 +5,30 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.Assert.*;
-import org.robolectric.Robolectric;
-import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.*;
 import org.robolectric.annotation.Config;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.robolectric.Shadows.shadowOf;
 
-import org.robolectric.*;
 
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
+import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
 
 import junit.framework.Assert;
 
+import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.shadows.ShadowActivity;
+import org.robolectric.shadows.ShadowAlertDialog;
+import org.robolectric.shadows.ShadowIntent;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 
 @RunWith(RobolectricGradleTestRunner.class)
@@ -37,10 +38,9 @@ public class MainMenuTest {
 
     private Button unlockDoorBtn;
     private Button toggleDoorBtn;
-    private Button normaliseDoorBtn;
+    private Button normalizeDoorBtn;
     private Button changeUserPinBtn;
     private MainMenu activity;
-    private ParseApplication PA;
 
 
     @Before
@@ -48,33 +48,60 @@ public class MainMenuTest {
         activity = Robolectric.buildActivity(MainMenu.class).create().visible().get();
         unlockDoorBtn = (Button) activity.findViewById(R.id.unlockDoor);
         toggleDoorBtn = (Button) activity.findViewById(R.id.toggleDoor);
-        normaliseDoorBtn = (Button) activity.findViewById(R.id.normaliseDoor);
+        normalizeDoorBtn = (Button) activity.findViewById(R.id.normalizeDoor);
         changeUserPinBtn = (Button) activity.findViewById(R.id.changeUserPin);
 
     }
-    @Test
+   @Test
     public void buttonsNotNull() throws Exception{
         assertNotNull(unlockDoorBtn);
         assertNotNull(toggleDoorBtn);
-        assertNotNull(normaliseDoorBtn);
+        assertNotNull(normalizeDoorBtn);
         assertNotNull(changeUserPinBtn);
     }
 
     @Test
-    public void testSomething() throws Exception {
-        // test
-    }  private ShadowActivity shadowActivity;
+    public void checkUpdatePasswordSwap() throws Exception
+    {
+        MainMenuFragment mainMenuFragment = (MainMenuFragment) activity.getFragmentManager().findFragmentByTag("Menu");
+        assertNotNull("Menu fragment not found", mainMenuFragment);
+        changeUserPinBtn.performClick();
+        UpdatePassword updateFragment = (UpdatePassword) activity.getFragmentManager().findFragmentByTag("updatePassword");
+        String y =  activity.getFragmentManager().toString();
+        assertNotNull("Password fragment not found" , updateFragment);
+    }
+    @Test
+    public void checkLogout()
+    {
+        MenuItem x = new RoboMenuItem(R.id.logout);
+        activity.onOptionsItemSelected(x);
+        ShadowActivity shadowActivity = shadowOf(activity);
+        Intent startedIntent = shadowActivity.peekNextStartedActivityForResult().intent;
+        ShadowIntent intent = shadowOf(startedIntent);
+        assertThat(intent.getComponent()).isEqualTo(new ComponentName(activity, MainActivity.class));
+    }
 
     @Test
-    public void buttonClickShouldStartNewActivity() throws Exception
+    public void checkPasswordFromMenu() throws Exception
     {
-        Button button = (Button) activity.findViewById(R.id.changeUserPin);
-        button.performClick();
-      //  Resources res = getResources();
-
-       // Drawable x =
-       // assertThat(button.getBackground()).isEqualTo(R.drawable.unlockdoor);
-//        Intent intent = shadowActivity.peekNextStartedActivityForResult().intent;
-  //      assertThat(intent.getComponent()).isEqualTo(new ComponentName(activity, UpdatePassword.class));
+        MenuItem x = new RoboMenuItem(R.id.changePassword);
+        activity.onOptionsItemSelected(x);
+        checkUpdatePasswordSwap();
     }
+
+    @Test
+    public void alertDialogueShown(){
+        Events.PinRequest pinRequest = new Events.PinRequest();
+        activity.onEvent(pinRequest);
+        AlertDialog alert =
+                ShadowAlertDialog.getLatestAlertDialog();
+        ShadowAlertDialog sAlert = shadowOf(alert);
+        TextView alertDialogueTV = (TextView)sAlert.getView().findViewById(R.id.textView1);
+        assertEquals(alertDialogueTV.getText().toString() ,(activity.getString(R.string.EnterPinPrompt)));
+    }
+
+
+
+
+
 }
