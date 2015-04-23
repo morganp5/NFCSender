@@ -15,5 +15,4 @@ public class MainActivity extends ParseLoginDispatchActivity {
     protected Class<?> getTargetClass() {
         return MainMenu.class;
     }
-
 }

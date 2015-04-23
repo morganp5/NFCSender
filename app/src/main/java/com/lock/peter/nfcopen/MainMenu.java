@@ -27,6 +27,7 @@ public class MainMenu extends Activity {
 
     @InjectView(R.id.header)
     TextView tv;
+
     private EventBus bus = EventBus.getDefault();
 
     @Override
@@ -39,28 +40,42 @@ public class MainMenu extends Activity {
         MainMenuFragment fragment = new MainMenuFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         fragment.onAttach(this);
-        transaction.add(R.id.sample_content_fragment, fragment, "Menu");
+        transaction.add(R.id.main_fragment, fragment, "Menu");
         transaction.commit();
     }
 
+
+    //Creates the custom ActionBar for the activity
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_unlock_door, menu);
+        View v = (View) menu.findItem(R.id.userid).getActionView();
+        TextView txtSearch = (TextView) v.findViewById(R.id.txt_search);
+        txtSearch.setText(User.getCurrentUser());
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    //Display enter pin dialogue when pin requested by door
     public void onEvent(Events.PinRequest pin) {
         Log.i("MM", "Pin not set");
         showPinDialog();
     }
 
-    public void onEvent(Events.changePasswordEvent changePasswordEvent) throws ParseException {
+    //Swap the main fragment when a user selects change pin
+    public void onEvent(Events.ChangePasswordEvent changePasswordEvent) throws ParseException {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         tv.setText("Enter New Password Details");
         UpdatePassword fragment = new UpdatePassword();
         fragment.onAttach(this);
-        transaction.replace(R.id.sample_content_fragment, fragment, "updatePassword");
+        transaction.replace(R.id.main_fragment, fragment, "updatePassword");
         transaction.addToBackStack("Menu");
         transaction.commitAllowingStateLoss();
     }
 
+    //Displays Pin Dialogue requesting user to enter appropriate door pin
     public void showPinDialog() {
-        LayoutInflater li = LayoutInflater.from(this);
-        View promptsView = li.inflate(R.layout.prompts, null);
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View promptsView = layoutInflater.inflate(R.layout.prompts, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 this);
         alertDialogBuilder.setView(promptsView);
@@ -86,21 +101,6 @@ public class MainMenu extends Activity {
         alertDialog.show();
     }
 
-    /**
-     * Callback function
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        /** Create an option menu from res/menu/items.xml */
-        getMenuInflater().inflate(R.menu.menu_unlock_door, menu);
-        /** Get the action view of the menu item whose id is search */
-        View v = (View) menu.findItem(R.id.photo).getActionView();
-        /** Get the edit text from the action view */
-        TextView txtSearch = (TextView) v.findViewById(R.id.txt_search);
-        txtSearch.setText(ParseApplication.currentUser());
-        return super.onCreateOptionsMenu(menu);
-    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -109,16 +109,20 @@ public class MainMenu extends Activity {
 
         switch (item.getItemId()) {
             case R.id.logout:
-                ParseApplication.logout();
+                User.logout();
                 Intent intent = new Intent(MainMenu.this, MainActivity.class);
                 startActivity(intent);
                 break;
 
             case R.id.changePassword:
-                Events.changePasswordEvent CPE = new Events.changePasswordEvent();
+                Events.ChangePasswordEvent CPE = new Events.ChangePasswordEvent();
                 bus.post(CPE);
+                break;
+
+            default:
                 break;
         }
         return true;
     }
+
 }

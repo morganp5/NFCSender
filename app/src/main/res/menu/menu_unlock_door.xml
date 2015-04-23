@@ -3,7 +3,7 @@
      
 
     <item
-        android:id="@+id/photo"
+        android:id="@+id/userid"
         android:showAsAction="ifRoom|withText"
         android:actionLayout="@layout/action_bar"
         android:title="User ID" />

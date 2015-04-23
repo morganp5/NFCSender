@@ -21,12 +21,8 @@ public class MainMenuFragment extends Fragment {
     Button normalizeDoor;
     @InjectView(R.id.toggleDoor)
     Button toggleDoor;
-    private EventBus bus = EventBus.getDefault();
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    private EventBus bus = EventBus.getDefault();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -34,14 +30,6 @@ public class MainMenuFragment extends Fragment {
         View myView = inflater.inflate(R.layout.main_menu_fragment, container, false);
         ButterKnife.inject(this, myView);
         return myView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        DoorOptions.setDefaults();
-        TextView tv = (TextView) getActivity().findViewById(R.id.header);
-        tv.setText("Select An Option");
     }
 
     @OnClick({R.id.unlockDoor, R.id.normalizeDoor, R.id.toggleDoor})
@@ -60,14 +48,24 @@ public class MainMenuFragment extends Fragment {
 
     @OnClick({R.id.changeUserPin})
     public void changePasswordFragment() {
-        Events.changePasswordEvent changePasswordEvent = new Events.changePasswordEvent();
+        Events.ChangePasswordEvent changePasswordEvent = new Events.ChangePasswordEvent();
         bus.post(changePasswordEvent);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        DoorOptions.setDefaults();
+        TextView tv = (TextView) getActivity().findViewById(R.id.header);
+        tv.setText("Select An Option");
+    }
+
+    //Resets menu buttons to default state
     public void resetButtons() {
         unlockDoor.setBackgroundResource(R.drawable.unlockdoor);
         toggleDoor.setBackgroundResource(R.drawable.toggledoor);
         normalizeDoor.setBackgroundResource(R.drawable.normaizedoor);
         DoorOptions.setDefaults();
     }
+
 }

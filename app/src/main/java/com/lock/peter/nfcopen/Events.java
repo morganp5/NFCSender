@@ -5,10 +5,14 @@ package com.lock.peter.nfcopen;
  */
 public class Events {
 
+    //Trigger: Door requires a pin
+    //Post-condition: Pin Dialogue Presented in main activity
     public static class PinRequest {
     }
 
-    public static class changePasswordEvent {
+    //Trigger:User Wants To Change Password
+    //Post-condition: Update Password Activity Started
+    public static class ChangePasswordEvent {
     }
 
 }

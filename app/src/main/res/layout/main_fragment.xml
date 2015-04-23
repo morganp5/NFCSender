@@ -16,7 +16,7 @@
         android:textStyle="italic" />
 
     <FrameLayout
-        android:id="@+id/sample_content_fragment"
+        android:id="@+id/main_fragment"
         android:layout_width="match_parent"
         android:layout_height="438dp"
         android:layout_gravity="center_horizontal|bottom"

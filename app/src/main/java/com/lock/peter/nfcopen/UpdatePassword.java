@@ -13,19 +13,16 @@ import com.parse.ParseException;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import de.greenrobot.event.EventBus;
 
-/**
- * Created by peter on 13/04/15.
- */
+
 public class UpdatePassword extends Fragment {
+
     @InjectView(R.id.current_password)
     EditText currentPasswordEt;
     @InjectView(R.id.new_password)
     EditText newPasswordEt;
     @InjectView(R.id.confirm__new_password)
     EditText confirmNewPasswordEt;
-    private EventBus bus = EventBus.getDefault();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,16 +45,16 @@ public class UpdatePassword extends Fragment {
         String confirmNewPassword = confirmNewPasswordEt.getText().toString();
         if (confirmNewPassword.equals(newPassword)) {
             try {
-                boolean success = ParseApplication.updatePassword(currentPassword, newPassword);
+                boolean success = User.updatePassword(currentPassword, newPassword);
                 if (success) {
-                    Toast.makeText(getActivity(), "Password Changed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Password Changed", Toast.LENGTH_LONG).show();
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
-                Toast.makeText(getActivity(), "Current Password Incorrect ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Current Password Incorrect ", Toast.LENGTH_LONG).show();
             }
         } else {
-            Toast.makeText(getActivity(), "New Passwords Do Not Match", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "New Passwords Do Not Match", Toast.LENGTH_LONG).show();
         }
     }
 

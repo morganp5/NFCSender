@@ -9,16 +9,10 @@ import org.json.JSONObject;
 
 public class DoorOptions {
 
-    private static final Boolean OPTION_FALSE = false;
-    private static final Boolean OPTION_TRUE = true;
-    private static final String TAG = "DoorOptions";
-    private static Boolean requiresPin = OPTION_FALSE;
-    private static String setting = "Open";
+    //Has The Door Pin Been Set
     private static int pin = 0;
-
-    public static Boolean isPinRequired() {
-        return requiresPin;
-    }
+    private static Boolean requiresPin = false;
+    private static String setting = "Open";
 
     public static int getPin() {
         return pin;
@@ -26,7 +20,10 @@ public class DoorOptions {
 
     public static void setPin(int pin) {
         DoorOptions.pin = pin;
-        requiresPin = OPTION_TRUE;
+        requiresPin = true;
+    }
+    public static Boolean isPinSet() {
+        return requiresPin;
     }
 
     public static void setDefaults() {
@@ -45,13 +42,14 @@ public class DoorOptions {
         return setting;
     }
 
+    //Prepares the JSON Message that will be transmitted to the NFCOpen application
     public static String prepareNdefPayload(String user, String sessionToken) {
         JSONObject unlockRequest = new JSONObject();
         try {
             unlockRequest.put("Name", user);
             unlockRequest.put("SessionToken", sessionToken);
             unlockRequest.put("Setting", setting);
-            if (isPinRequired()) {
+            if (isPinSet()) {
                 unlockRequest.put("Pin", getPin());
             }
         } catch (JSONException e) {
