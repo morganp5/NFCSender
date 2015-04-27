@@ -2,12 +2,6 @@ package com.lock.peter.nfclock;
 
 import android.app.Activity;
 import android.os.Bundle;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
-import butterknife.OnEditorAction;
-
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -19,6 +13,11 @@ import android.widget.Toast;
 
 import com.parse.ParseObject;
 import com.parse.ParseRole;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+import butterknife.OnEditorAction;
 
 public class AddDoorActivity extends Activity {
 

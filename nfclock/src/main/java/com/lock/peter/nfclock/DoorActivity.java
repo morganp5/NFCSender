@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.util.Log;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -17,13 +17,12 @@ import org.json.JSONObject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 
 public class DoorActivity extends Activity implements AccessCardReader.AccessAttempt {
 
-    public static final String TAG = "DoorActivity";
-    public static int READER_FLAGS = NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK;
-    public AccessCardReader mAccessCardReader;
+    private static final String TAG = "DoorActivity";
+    private static final int READER_FLAGS = NfcAdapter.FLAG_READER_NFC_A | NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK;
+    private AccessCardReader mAccessCardReader;
 
     @InjectView(R.id.doorStatus)
     TextView doorStatus;
@@ -54,29 +53,22 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         super.onOptionsItemSelected(item);
-
-        switch(item.getItemId()){
-            case R.id.logs:
-                Toast.makeText(getBaseContext(), "You selected Phone", Toast.LENGTH_SHORT).show();
-                viewLogs();
-                break;
-
-            case R.id.user:
-                addUser();
-                break;
+        int itemId= item.getItemId();
+        if (itemId == R.id.logs) {
+            viewLogs();
+        } else if (itemId == R.id.user) {
+            addUser();
         }
         return true;
-
     }
 
-    void addUser() {
+    private void addUser() {
         addNewUser = true;
         showToast("Swipe user phone to add");
     }
 
-    void viewLogs() {
+    private void viewLogs() {
         Intent intent = new Intent(getApplicationContext(), ViewLogActivity.class);
         intent.putExtra("doorName", door.getDoorName());
         startActivity(intent);
@@ -94,12 +86,10 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
                 Log.i(TAG, "Adding new user");
                 door.addAllowedUser(sessionToken);
                 addNewUser = false;
-            }
-            else if (allowed) {
+            } else if (allowed) {
                 final String setting = jsonUnlockRequest.getString("Setting");
                 accessGranted(setting);
-            }
-            else
+            } else
                 openCountdown(false);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -107,7 +97,7 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
     }
 
 
-    public void accessGranted(String setting){
+    private void accessGranted(String setting) {
 
         if (setting.equals("Open")) {
             openCountdown(true);
@@ -129,12 +119,13 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
     }
 
 
-    public void openCountdown(final boolean allowed) {
+    private void openCountdown(final boolean allowed) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 new CountDownTimer(10000, 1000) {
                     boolean first = true;
+
                     public void onTick(long millisUntilFinished) {
                         if (allowed) {
                             if (first) {
@@ -144,11 +135,12 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
                             doorStatus.setText("Unlocked for:" + millisUntilFinished / 1000);
                         } else {
                             doorStatus.setText("Access Denied");
-                            if(first){
+                            if (first) {
                                 doorStatus.setBackgroundResource(R.drawable.denied);
                             }
                         }
                     }
+
                     public void onFinish() {
                         doorStatus.setText("Door:Locked");
                         first = true;

@@ -14,23 +14,20 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.parse.ParseObject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import butterknife.OnItemSelected;
 
 public class DoorMenu extends Activity {
 
-    private final String TAG = "DOORMENU";
+    private final static String TAG = "DOORMENU";
 
     @InjectView(R.id.selectDoor)
     Spinner selectDoor;
@@ -56,7 +53,7 @@ public class DoorMenu extends Activity {
     }
 
     // add items into spinner dynamically
-    public void pullDoors() {
+    private void pullDoors() {
         mainAdapter = new CustomAdapter(this);
         //Display DoorNames in list
         mainAdapter.setTextKey("DoorName");
@@ -98,7 +95,7 @@ public class DoorMenu extends Activity {
     boolean enterDoorPin(TextView v, int actionId, KeyEvent event) {
         if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
             getDoor();
-         }
+        }
         return false;
     }
 
@@ -111,13 +108,10 @@ public class DoorMenu extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         super.onOptionsItemSelected(item);
-
-        switch(item.getItemId()){
-            case R.id.newdoor:
-                addNewDoor();
-                break;
+        int itemId = item.getItemId();
+        if (itemId == R.id.newdoor) {
+            addNewDoor();
         }
         return true;
 

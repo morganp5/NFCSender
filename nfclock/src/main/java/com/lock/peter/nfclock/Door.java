@@ -2,13 +2,12 @@ package com.lock.peter.nfclock;
 
 import android.util.Log;
 
+import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.LogInCallback;
-import com.parse.ParseACL;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseException;
-import com.parse.FindCallback;
 import com.parse.ParseRelation;
 import com.parse.ParseRole;
 import com.parse.ParseUser;
@@ -19,22 +18,17 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by peter on 29/01/15.
- */
-
 
 public class Door {
 
     private boolean requiresPin = false;
-    private final String TAG = "DOOR";
+    private static final String TAG = "DOOR";
     private String doorName = "";
-    private final ArrayList<String> groupUsers = new ArrayList<>();
+    private final List<String> groupUsers = new ArrayList<>();
     private ParseRole doorRole;
     private String doorMessage;
 
     //Constructor pulls door object from parse and sets up values
-    //TODO Change Contructor to add new door to parse add seperate method for pulling existing doors
     public Door(String ID) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Door");
         query.whereEqualTo("objectId", ID);
@@ -55,7 +49,7 @@ public class Door {
         );
     }
 
-    public void addAllowedUser(String sessionToken) {
+    protected void addAllowedUser(String sessionToken) {
         ParseUser user = new ParseUser();
         user.becomeInBackground(sessionToken, new LogInCallback() {
             public void done(ParseUser user, ParseException e) {

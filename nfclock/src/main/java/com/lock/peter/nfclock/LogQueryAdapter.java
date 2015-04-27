@@ -1,14 +1,14 @@
 package com.lock.peter.nfclock;
 
-import com.parse.ParseObject;
-import com.parse.ParseQueryAdapter;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseQueryAdapter;
 
 import java.text.SimpleDateFormat;
 

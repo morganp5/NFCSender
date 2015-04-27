@@ -41,11 +41,12 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
     // ISO-DEP command HEADER for selecting an AID.
     // Format: [Class | Instruction | Parameter 1 | Parameter 2]
     private static final String SELECT_APDU_HEADER = "00A40400";
+    //Header used to request pin
     private static final String GET_DATA_APDU_HEADER = "00CA0000";
     // "OK" status word sent in response to SELECT AID command (0x9000)
     private static final byte[] SELECT_OK_SW = {(byte) 0x90, (byte) 0x00};
 
-    private String gotData = "", finalGotData = "";
+    private String gotData = "";
     private Door door;
     long timeTaken = 0;
 
@@ -57,11 +58,8 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
         accessAttemptCallback = new WeakReference<AccessAttempt>(accessAttempt);
         this.door = door;
     }
-    /**
-     * Callback when a new tag is discovered by the system.
-     *
-     * @param tag Discovered tag
-     */
+
+    //Called when a Phone/Tag is within range of the application
     @Override
     public void onTagDiscovered(Tag tag) {
         Log.i(TAG, "New tag discovered");
@@ -75,10 +73,9 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
                 isoDep.setTimeout(3600);
                 Log.i(TAG, "MaxTransceiveLength = " + isoDep.getMaxTransceiveLength());
                 Log.i(TAG, "Requesting remote AID: " + APPLICATION_AID);
-                byte[] selCommand = BuildSelectApdu(APPLICATION_AID);
-
+                byte[] selCommand = buildSelectApdu(APPLICATION_AID);
                 // Send command to remote device
-                Log.i(TAG, "Sending: " + ByteArrayToHexString(selCommand));
+                Log.i(TAG, "Sending: " + byteArrayToHexString(selCommand));
                 byte[] result = isoDep.transceive(selCommand);
                 // If AID is successfully selected, 0x9000 is returned as the status word (last 2
                 // bytes of the result) by convention. Everything before the status word is
@@ -93,8 +90,8 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
                     // Inform DoorActivity of received account number
                     timeTaken = System.currentTimeMillis();
                     while (!(gotData.contains("END")) && door.isRequiresPin()) {
-                        byte[] getCommand = BuildGetDataApdu();
-                        Log.i(TAG, "Sending: " + ByteArrayToHexString(getCommand));
+                        byte[] getCommand = buildGetDataApdu();
+                        Log.i(TAG, "Sending: " + byteArrayToHexString(getCommand));
                         isoDep.setTimeout(20000);
                         result = isoDep.transceive(getCommand);
                         resultLength = result.length;
@@ -103,10 +100,8 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
                         if (Arrays.equals(SELECT_OK_SW, statusWordNew)) {
                             gotData = new String(payload, "UTF-8");
                             Log.i(TAG, "Received: " + gotData);
-                            finalGotData = finalGotData + gotData;
-                            Log.i(TAG, "Data transferred : " + finalGotData.length());
+                            acccessCredentials = gotData;
                         }
-
                     }
                     accessAttemptCallback.get().onAccessAttempt(acccessCredentials);
                 }
@@ -123,9 +118,9 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
      * @param aid Application ID (AID) to select
      * @return APDU for SELECT AID command
      */
-    public static byte[] BuildSelectApdu(String aid) {
+    public static byte[] buildSelectApdu(String aid) {
         // Format: [CLASS | INSTRUCTION | PARAMETER 1 | PARAMETER 2 | LENGTH | DATA]
-        return HexStringToByteArray(SELECT_APDU_HEADER + String.format("%02X", aid.length() / 2) + aid);
+        return hexStringToByteArray(SELECT_APDU_HEADER + String.format("%02X", aid.length() / 2) + aid);
     }
 
     /**
@@ -133,9 +128,9 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
      *
      * @return APDU for SELECT AID command
      */
-    public static byte[] BuildGetDataApdu() {
+    public static byte[] buildGetDataApdu() {
         // Format: [CLASS | INSTRUCTION | PARAMETER 1 | PARAMETER 2 | LENGTH | DATA]
-        return HexStringToByteArray(GET_DATA_APDU_HEADER + "0FFF");
+        return hexStringToByteArray(GET_DATA_APDU_HEADER + "0FFF");
     }
 
     /**
@@ -144,7 +139,7 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
      * @param bytes Bytes to convert
      * @return String, containing hexadecimal representation.
      */
-    public static String ByteArrayToHexString(byte[] bytes) {
+    public static String byteArrayToHexString(byte[] bytes) {
         final char[] hexArray = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
         char[] hexChars = new char[bytes.length * 2];
         int v;
@@ -163,7 +158,7 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
      * @param s String containing hexadecimal characters to convert
      * @return Byte array generated from input
      */
-    public static byte[] HexStringToByteArray(String s) {
+    public static byte[] hexStringToByteArray(String s) {
         int len = s.length();
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
