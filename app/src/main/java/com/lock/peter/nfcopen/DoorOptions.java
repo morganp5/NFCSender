@@ -9,38 +9,36 @@ import org.json.JSONObject;
 
 public class DoorOptions {
 
-    //Has The Door Pin Been Set
+    //Current Pin To Be Set
     private static int pin = 0;
-    private static Boolean requiresPin = false;
-    private static String setting = "Open";
+    //Has The Door Pin Been Set
+    private static Boolean pinSet = false;
+    private static String currentSetting = "Open";
 
-    public static int getPin() {
+
+    public static int getPin(){
         return pin;
     }
-
+    public static boolean isPinSet(){
+        return pinSet;
+    }
     public static void setPin(int pin) {
         DoorOptions.pin = pin;
-        requiresPin = true;
-    }
-    public static Boolean isPinSet() {
-        return requiresPin;
+        pinSet = true;
     }
 
     public static void setDefaults() {
-        setting = "Open";
+        currentSetting = "Open";
     }
 
     public static void setToggle() {
-        setting = "Toggle";
+        currentSetting = "Toggle";
     }
 
     public static void setNormalize() {
-        setting = "Normalize";
+        currentSetting = "Normalize";
     }
 
-    public static String getCurrentSetting() {
-        return setting;
-    }
 
     //Prepares the JSON Message that will be transmitted to the NFCOpen application
     public static String prepareNdefPayload(String user, String sessionToken) {
@@ -48,8 +46,8 @@ public class DoorOptions {
         try {
             unlockRequest.put("Name", user);
             unlockRequest.put("SessionToken", sessionToken);
-            unlockRequest.put("Setting", setting);
-            if (isPinSet()) {
+            unlockRequest.put("Setting", currentSetting);
+            if (pinSet) {
                 unlockRequest.put("Pin", getPin());
             }
         } catch (JSONException e) {

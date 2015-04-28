@@ -33,7 +33,7 @@ public class MainMenuFragment extends Fragment {
     }
 
     @OnClick({R.id.unlockDoor, R.id.normalizeDoor, R.id.toggleDoor})
-    public void pickDoor(Button selectedButton) {
+    public void selectUnlockOption(Button selectedButton) {
         resetButtons();
         if (selectedButton.getId() == R.id.normalizeDoor) {
             selectedButton.setBackgroundResource(R.drawable.normalizesel);
@@ -67,5 +67,4 @@ public class MainMenuFragment extends Fragment {
         normalizeDoor.setBackgroundResource(R.drawable.normaizedoor);
         DoorOptions.setDefaults();
     }
-
 }
