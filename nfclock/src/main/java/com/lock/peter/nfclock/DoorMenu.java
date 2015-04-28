@@ -68,7 +68,6 @@ public class DoorMenu extends Activity {
         if (selectDoorInit) {
             doorPinET.setVisibility(View.VISIBLE);
             doorCodeText.setVisibility(View.VISIBLE);
-
         } else selectDoorInit = !selectDoorInit;
     }
 
@@ -77,6 +76,7 @@ public class DoorMenu extends Activity {
         startActivity(intent);
     }
 
+    //If the user enters correct details for the selected door DoorActivity is launched
     public void getDoor() {
         ParseObject door = (ParseObject) selectDoor.getSelectedItem();
         String doorPin = door.get("Pin").toString();

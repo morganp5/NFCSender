@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-
+    <item
+        android:id="@+id/allLogs"
+        android:showAsAction="collapseActionView"
+        android:title="All Logs" />
     <item
         android:id="@+id/search"
         android:actionLayout="@layout/log_search"

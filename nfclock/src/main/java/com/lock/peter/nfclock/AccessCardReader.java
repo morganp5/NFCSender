@@ -36,19 +36,13 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
     }
 
     private static final String TAG = "AccessCardReader";
-    // AID for our loyalty card service.
+    // AID for our card service.
     private static final String APPLICATION_AID = "F222222222";
-    // ISO-DEP command HEADER for selecting an AID.
-    // Format: [Class | Instruction | Parameter 1 | Parameter 2]
-    private static final String SELECT_APDU_HEADER = "00A40400";
-    //Header used to request pin
-    private static final String GET_DATA_APDU_HEADER = "00CA0000";
+
     // "OK" status word sent in response to SELECT AID command (0x9000)
     private static final byte[] SELECT_OK_SW = {(byte) 0x90, (byte) 0x00};
 
-    private String gotData = "";
     private Door door;
-    long timeTaken = 0;
 
     // Weak reference to prevent retain loop. accessAttemptCallback is responsible for exiting
     // foreground mode before it becomes invalid (e.g. during onPause() or onStop()).
@@ -63,19 +57,18 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
     @Override
     public void onTagDiscovered(Tag tag) {
         Log.i(TAG, "New tag discovered");
-        gotData = "";
+        long timeTaken = 0;
+        String gotData = "";
         IsoDep isoDep = IsoDep.get(tag);
         if (isoDep != null) {
             try {
                 // Connect to the remote NFC device
                 isoDep.connect();
-                Log.i(TAG, "Timeout = " + isoDep.getTimeout());
                 isoDep.setTimeout(3600);
                 Log.i(TAG, "MaxTransceiveLength = " + isoDep.getMaxTransceiveLength());
                 Log.i(TAG, "Requesting remote AID: " + APPLICATION_AID);
                 byte[] selCommand = buildSelectApdu(APPLICATION_AID);
                 // Send command to remote device
-                Log.i(TAG, "Sending: " + byteArrayToHexString(selCommand));
                 byte[] result = isoDep.transceive(selCommand);
                 // If AID is successfully selected, 0x9000 is returned as the status word (last 2
                 // bytes of the result) by convention. Everything before the status word is
@@ -87,21 +80,11 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
                     // The remote NFC device will immediately respond with its stored access credentials
                     String acccessCredentials = new String(payload, "UTF-8");
                     Log.i(TAG, "Received: " + acccessCredentials);
-                    // Inform DoorActivity of received account number
-                    timeTaken = System.currentTimeMillis();
-                    while (!(gotData.contains("END")) && door.isRequiresPin()) {
-                        byte[] getCommand = buildGetDataApdu();
+                    while (door.isPinRequired() && !acccessCredentials.contains("Pin") ) {
+                        byte[] getCommand = buildGetPinApdu();
                         Log.i(TAG, "Sending: " + byteArrayToHexString(getCommand));
                         isoDep.setTimeout(20000);
                         result = isoDep.transceive(getCommand);
-                        resultLength = result.length;
-                        byte[] statusWordNew = {result[resultLength - 2], result[resultLength - 1]};
-                        payload = Arrays.copyOf(result, resultLength - 2);
-                        if (Arrays.equals(SELECT_OK_SW, statusWordNew)) {
-                            gotData = new String(payload, "UTF-8");
-                            Log.i(TAG, "Received: " + gotData);
-                            acccessCredentials = gotData;
-                        }
                     }
                     accessAttemptCallback.get().onAccessAttempt(acccessCredentials);
                 }
@@ -111,35 +94,26 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
         }
     }
 
-    /**
-     * Build APDU for SELECT AID command. This command indicates which service a reader is
-     * interested in communicating with. See ISO 7816-4.
-     *
-     * @param aid Application ID (AID) to select
-     * @return APDU for SELECT AID command
-     */
-    public static byte[] buildSelectApdu(String aid) {
+    //Build APDU for SELECT AID command. This command indicates which service a reader is
+    //interested in communicating with. See ISO 7816-4.
+    private static byte[] buildSelectApdu(String aid) {
+        // ISO-DEP command HEADER for selecting an AID.
+        // Format: [Class | Instruction | Parameter 1 | Parameter 2]
+        final String SELECT_APDU_HEADER = "00A40400";
         // Format: [CLASS | INSTRUCTION | PARAMETER 1 | PARAMETER 2 | LENGTH | DATA]
         return hexStringToByteArray(SELECT_APDU_HEADER + String.format("%02X", aid.length() / 2) + aid);
     }
 
-    /**
-     * Build APDU for GET_DATA command. See ISO 7816-4.
-     *
-     * @return APDU for SELECT AID command
-     */
-    public static byte[] buildGetDataApdu() {
+    //Build APDU for GET_PIN command. See ISO 7816-4.
+    private static byte[] buildGetPinApdu() {
+        //Header used to request pin
+        final String GET_PIN_APDU_HEADER = "00CA0000";
         // Format: [CLASS | INSTRUCTION | PARAMETER 1 | PARAMETER 2 | LENGTH | DATA]
-        return hexStringToByteArray(GET_DATA_APDU_HEADER + "0FFF");
+        return hexStringToByteArray(GET_PIN_APDU_HEADER + "0FFF");
     }
 
-    /**
-     * Utility class to convert a byte array to a hexadecimal string.
-     *
-     * @param bytes Bytes to convert
-     * @return String, containing hexadecimal representation.
-     */
-    public static String byteArrayToHexString(byte[] bytes) {
+    //Utility class to convert a byte array to a hexadecimal string.
+    private static String byteArrayToHexString(byte[] bytes) {
         final char[] hexArray = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
         char[] hexChars = new char[bytes.length * 2];
         int v;
@@ -151,13 +125,8 @@ public class AccessCardReader implements NfcAdapter.ReaderCallback {
         return new String(hexChars);
     }
 
-    /**
-     * Utility class to convert a hexadecimal string to a byte string.
-     * Behavior with input strings containing non-hexadecimal characters is undefined.
-     *
-     * @param s String containing hexadecimal characters to convert
-     * @return Byte array generated from input
-     */
+    //Utility class to convert a hexadecimal string to a byte string.
+    //Behavior with input strings containing non-hexadecimal characters is undefined.
     public static byte[] hexStringToByteArray(String s) {
         int len = s.length();
         byte[] data = new byte[len / 2];

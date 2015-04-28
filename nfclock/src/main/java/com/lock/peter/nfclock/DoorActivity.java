@@ -28,6 +28,7 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
     TextView doorStatus;
 
     private Door door;
+
     private boolean addNewUser = false;
 
     @Override
@@ -98,7 +99,6 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
 
 
     private void accessGranted(String setting) {
-
         if (setting.equals("Open")) {
             openCountdown(true);
         } else if (setting.equals("Toggle")) {
@@ -118,14 +118,13 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
         }
     }
 
-
+    //Changes the background image if door is opened or access is denied
     private void openCountdown(final boolean allowed) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 new CountDownTimer(10000, 1000) {
                     boolean first = true;
-
                     public void onTick(long millisUntilFinished) {
                         if (allowed) {
                             if (first) {
@@ -134,19 +133,16 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
                             }
                             doorStatus.setText("Unlocked for:" + millisUntilFinished / 1000);
                         } else {
-                            doorStatus.setText("Access Denied");
                             if (first) {
+                                doorStatus.setText("Access Denied");
                                 doorStatus.setBackgroundResource(R.drawable.denied);
                             }
                         }
                     }
-
                     public void onFinish() {
                         doorStatus.setText("Door:Locked");
-                        first = true;
                         doorStatus.setBackgroundResource(R.drawable.closed);
                     }
-
                 }.start();
             }
         });

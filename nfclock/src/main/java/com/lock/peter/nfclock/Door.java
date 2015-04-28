@@ -21,12 +21,12 @@ import java.util.List;
 
 public class Door {
 
-    private boolean requiresPin = false;
+    private boolean pinRequired = false;
+    private int doorPin;
     private static final String TAG = "DOOR";
     private String doorName = "";
     private final List<String> groupUsers = new ArrayList<>();
     private ParseRole doorRole;
-    private String doorMessage;
 
     //Constructor pulls door object from parse and sets up values
     public Door(String ID) {
@@ -36,10 +36,13 @@ public class Door {
                                        @Override
                                        public void done(ParseObject door, ParseException e) {
                                            if (e == null) {
-                                               setRequiresPin(door.getBoolean("requiresPin"));
+                                               setPinRequired(door.getBoolean("requiresPin"));
                                                setDoorName(door.getString("DoorName"));
                                                Log.i(TAG, door.getString("DoorName"));
                                                getAllowedUsers();
+                                               if (pinRequired) {
+                                                   doorPin = door.getInt("Pin");
+                                               }
                                            } else {
                                                Log.e(TAG, "Error Getting Door");
                                            }
@@ -68,10 +71,10 @@ public class Door {
     }
 
     private void getAllowedUsers() {
-        ParseQuery<ParseRole> query2 = ParseRole.getQuery();
+        ParseQuery<ParseRole> query = ParseRole.getQuery();
         Log.i(TAG, getDoorName());
-        query2.whereEqualTo("name", getDoorName());
-        query2.findInBackground(new FindCallback<ParseRole>() {
+        query.whereEqualTo("name", getDoorName());
+        query.findInBackground(new FindCallback<ParseRole>() {
             @Override
             public void done(List<ParseRole> objects, ParseException e) {
                 if (e == null) {
@@ -102,6 +105,12 @@ public class Door {
         if (groupUsers.contains(user)) {
             accessGranted = true;
         }
+        if (pinRequired) {
+            int transmittedPin = accessCredentials.getInt("Pin");
+            if(transmittedPin != doorPin){
+                accessGranted = false;
+            }
+        }
         logAccessAttempt(user, accessGranted);
         Log.i(TAG, "User Authorized" + String.valueOf(accessGranted));
         return accessGranted;
@@ -115,11 +124,6 @@ public class Door {
         DoorLog.saveInBackground();
     }
 
-    private boolean doorOpen = false;
-
-    public void setDoorOpen(boolean doorOpen) {
-        this.doorOpen = doorOpen;
-    }
 
     public String getDoorName() {
         return doorName;
@@ -128,28 +132,12 @@ public class Door {
     public void setDoorName(String doorName) {
         this.doorName = doorName;
     }
-
-    public String getDoorMessage(String setting) {
-        if (setting.equals("Toggle")) {
-            setDoorOpen(true);
-            setDoorMessage("Door is Toggled Opened");
-        } else {
-            setDoorOpen(false);
-            setDoorMessage("Door is Locked");
-        }
-        return doorMessage;
+    public boolean isPinRequired() {
+        return pinRequired;
     }
 
-    private void setDoorMessage(String doorMessage) {
-        this.doorMessage = doorMessage;
-    }
-
-    public boolean isRequiresPin() {
-        return requiresPin;
-    }
-
-    public void setRequiresPin(boolean requiresPin) {
-        this.requiresPin = requiresPin;
+    public void setPinRequired(boolean pinRequired) {
+        this.pinRequired = pinRequired;
     }
 }
 

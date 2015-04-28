@@ -3,7 +3,6 @@ apply plugin: "sonar-runner"
 apply plugin: 'sonar'
 apply plugin: 'jacoco'
 
-
 android {
     compileSdkVersion 21
     buildToolsVersion "21.1.1"
@@ -15,10 +14,8 @@ android {
         versionCode 1
         versionName "1.0"
     }
-    android {
-        testOptions {
-            unitTests.returnDefaultValues = true
-        }
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
     buildTypes {
         release {
@@ -46,8 +43,6 @@ dependencies {
     compile project(':ParseLoginUI')
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.jakewharton:butterknife:5.1.1'
-
-
     testCompile 'junit:junit:4.12'
     testCompile 'org.easytesting:fest:1.0.16'
     testCompile 'com.squareup:fest-android:1.0.8'
@@ -65,7 +60,7 @@ def coverageSourceDirs = [
         '../app/src/main/java'
 ]
 
-task jacocoTestReport(type:JacocoReport, dependsOn: "testDebug") {
+task jacocoTestReport(type: JacocoReport, dependsOn: "testDebug") {
     group = "Reporting"
 
     description = "Generate Jacoco coverage reports"
@@ -102,3 +97,10 @@ sonarRunner() {
         property "sonar.jacoco.reportPath", "../app/build/jacoco/testDebug.exec"
     }
 }
+/*
+appthwack {
+    apiKey = '2412515acadb6565b08d7c3a12a40121d17fff3d' //See: https://appthwack.com/user/profile
+    type = 'junit'
+    project = 'NFCOpen'
+    devicePool = 'Top 10 devices'
+}*/

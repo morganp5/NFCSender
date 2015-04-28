@@ -88,5 +88,4 @@ public class AddDoorActivity extends Activity {
         Toast toast = Toast.makeText(this, text, duration);
         toast.show();
     }
-
 }

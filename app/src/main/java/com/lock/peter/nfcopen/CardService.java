@@ -37,7 +37,6 @@ public class CardService extends HostApduService {
     private static byte[] buildGetPinApdu() {
         // Format: [Class | Instruction | Parameter 1 | Parameter 2]
         final String GET_PIN_APDU_HEADER = "00CA0000";
-
         // Format: [CLASS | INSTRUCTION | PARAMETER 1 | PARAMETER 2 | LENGTH | DATA]
         return hexStringToByteArray(GET_PIN_APDU_HEADER + "0FFF");
     }
@@ -104,18 +103,15 @@ public class CardService extends HostApduService {
     }
 
     private byte[] requiresPin(){
+        byte[] nullArray = {};
         //If the user has already entered door pin transmit pin
         if (DoorOptions.isPinSet()) {
             int pin = DoorOptions.getPin();
             Log.i(TAG, "Sending Pin: " + pin);
-            String stringToSend = pin + " END";
-            byte[] pinBytes = stringToSend.getBytes();
-            Log.i(TAG, stringToSend);
-            return ConcatArrays(pinBytes, SELECT_OK_SW);
+            return ConcatArrays(nullArray, SELECT_OK_SW);
         }
         //If the user has not previously entered a door pin present them with a pin dialogue
         else {
-            byte[] nullArray = {};
             Log.i(TAG, "Requesting Door Pin Entry");
             Events.PinRequest pr = new Events.PinRequest();
             bus.post(pr);

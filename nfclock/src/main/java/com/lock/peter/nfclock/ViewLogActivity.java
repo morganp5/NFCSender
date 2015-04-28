@@ -18,10 +18,6 @@ import com.parse.ParseQueryAdapter;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-/**
- * Created by peter on 25/03/15.
- */
-
 public class ViewLogActivity extends Activity {
 
     private ParseQueryAdapter<ParseObject> mainAdapter;
@@ -65,6 +61,9 @@ public class ViewLogActivity extends Activity {
         super.onOptionsItemSelected(item);
 
         switch (item.getItemId()) {
+            case R.id.allLogs:
+                mainAdapter = new LogQueryAdapter(this, doorId);
+                break;
             case R.id.accessGranted:
                 mainAdapter = new LogQueryAdapter(ViewLogActivity.this, doorId, true);
                 break;
