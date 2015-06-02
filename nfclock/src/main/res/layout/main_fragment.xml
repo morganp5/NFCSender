@@ -19,6 +19,16 @@ limitations under the License.
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#009ACE">
+    <TextView
+        android:id="@+id/doorName"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="@string/intro_message"
+        android:textIsSelectable="false"
+        android:textSize="20sp"
+        android:textColor="#ffffffff"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal" />
 
     <FrameLayout
         android:id="@+id/sample_content_fragment"
@@ -33,9 +43,8 @@ limitations under the License.
             android:background="@drawable/closed"
             android:text="@string/intro_message"
             android:textIsSelectable="false"
-            android:textSize="40dp"
+            android:textSize="40sp"
             android:textColor="#ffffffff"
-            android:editable="false"
             android:layout_gravity="center"
             android:gravity="center_horizontal" />
     </FrameLayout>

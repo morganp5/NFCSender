@@ -27,6 +27,9 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
     @InjectView(R.id.doorStatus)
     TextView doorStatus;
 
+    @InjectView(R.id.doorName)
+    TextView doorName;
+
     private Door door;
 
     private boolean addNewUser = false;
@@ -41,6 +44,7 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
         door = new Door(doorId);
         //Set up the card reader
         mAccessCardReader = new AccessCardReader(this, door);
+        doorName.setText(doorId);
         enableReaderMode();
     }
 
@@ -55,7 +59,7 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        int itemId= item.getItemId();
+        int itemId = item.getItemId();
         if (itemId == R.id.logs) {
             viewLogs();
         } else if (itemId == R.id.user) {
@@ -82,23 +86,29 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
         try {
             JSONObject jsonUnlockRequest = new JSONObject(accessCredentials);
             Boolean allowed = door.checkIfAuthorised(jsonUnlockRequest);
+            final String userName = jsonUnlockRequest.getString("Name");
             if (addNewUser) {
                 String sessionToken = jsonUnlockRequest.getString("SessionToken");
                 Log.i(TAG, "Adding new user");
                 door.addAllowedUser(sessionToken);
+                showToast(userName + " added to access list");
                 addNewUser = false;
             } else if (allowed) {
                 final String setting = jsonUnlockRequest.getString("Setting");
-                accessGranted(setting);
-            } else
+                accessGranted(userName, setting);
+                Log.i(TAG, "ALLOWED ");
+                showToast(userName + " granted access");
+            } else {
+                showToast(userName + " denied access");
+                Log.i(TAG, "Denied ");
                 openCountdown(false);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-
-    private void accessGranted(String setting) {
+    private void accessGranted(String name, String setting) {
         if (setting.equals("Open")) {
             openCountdown(true);
         } else if (setting.equals("Toggle")) {
@@ -125,22 +135,25 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
             public void run() {
                 new CountDownTimer(10000, 1000) {
                     boolean first = true;
+
                     public void onTick(long millisUntilFinished) {
                         if (allowed) {
                             if (first) {
                                 first = false;
                                 doorStatus.setBackgroundResource(R.drawable.open);
                             }
-                            doorStatus.setText("Unlocked for:" + millisUntilFinished / 1000);
+                            doorStatus.setText("Unlocked for " + millisUntilFinished / 1000);
                         } else {
                             if (first) {
+                                first = false;
                                 doorStatus.setText("Access Denied");
                                 doorStatus.setBackgroundResource(R.drawable.denied);
                             }
                         }
                     }
+
                     public void onFinish() {
-                        doorStatus.setText("Door:Locked");
+                        doorStatus.setText("Locked");
                         doorStatus.setBackgroundResource(R.drawable.closed);
                     }
                 }.start();
@@ -149,8 +162,12 @@ public class DoorActivity extends Activity implements AccessCardReader.AccessAtt
     }
 
 
-    protected void showToast(CharSequence text) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+    protected void showToast(final CharSequence text) {
+        this.runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override

@@ -83,11 +83,11 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "testDebug") {
         html.enabled = true
     }
 }
+
 sonarRunner() {
     sonarProperties {
         property "sonar.host.url", "http://sonar.chewy.ianduffy.ie"
 
-        //I added these properties to my gradle.build
         property "sonar.projectKey", "NFCOpenSonar"
         property "sonar.projectName", "NFCOpenSonar"
         property "sonar.projectVersion", "V1.0"
@@ -97,10 +97,3 @@ sonarRunner() {
         property "sonar.jacoco.reportPath", "../app/build/jacoco/testDebug.exec"
     }
 }
-/*
-appthwack {
-    apiKey = '2412515acadb6565b08d7c3a12a40121d17fff3d' //See: https://appthwack.com/user/profile
-    type = 'junit'
-    project = 'NFCOpen'
-    devicePool = 'Top 10 devices'
-}*/

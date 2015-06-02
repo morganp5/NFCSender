@@ -19,5 +19,5 @@
     <string name="add_door_button_label">Add Door</string>
     <string name="enter_door">Enter Door Name</string>
     <string name="viewDoorLogs">Viewing Door Logs</string>
-    <string name="intro_message">Door:Locked </string>
+    <string name="intro_message">Locked </string>
 </resources>

@@ -9,16 +9,16 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="25dp"
+        android:layout_marginTop="25dp"
         android:text="@string/viewDoorLogs"
-        android:textSize="40sp"
-        android:layout_marginBottom="50dp" />
-
+        android:textSize="38sp" />
+0
     <ListView
         android:id="@+id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-    android:layout_below="@+id/logsHeader"
-    />
+        android:layout_below="@+id/logsHeader" />
 
 
 </RelativeLayout>

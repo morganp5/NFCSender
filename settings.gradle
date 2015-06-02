@@ -1,1 +1,1 @@
-include ':app', ':ParseLoginUI', ':ParseLoginSampleLayoutOverride', ':ParseLoginSampleBasic', ':ParseLoginSampleWithDispatchActivity', ':ParseLoginSampleCodeCustomization', ':nfclock'
+include ':app', ':ParseLoginUI', ':nfclock'

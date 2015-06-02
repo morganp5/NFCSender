@@ -62,7 +62,7 @@ public class AddDoorActivity extends Activity {
 
     @OnClick(R.id.requires_door_pin)
     public void addPin() {
-        requiresPin = true;
+        requiresPin = !requiresPin;
         doorPinEt.setVisibility(View.VISIBLE);
     }
 

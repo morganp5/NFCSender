@@ -3,13 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/NFCSender.iml" filepath="$PROJECT_DIR$/NFCSender.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ParseLoginSampleBasic/ParseLoginSampleBasic.iml" filepath="$PROJECT_DIR$/ParseLoginSampleBasic/ParseLoginSampleBasic.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ParseLoginSampleCodeCustomization/ParseLoginSampleCodeCustomization.iml" filepath="$PROJECT_DIR$/ParseLoginSampleCodeCustomization/ParseLoginSampleCodeCustomization.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ParseLoginSampleLayoutOverride/ParseLoginSampleLayoutOverride.iml" filepath="$PROJECT_DIR$/ParseLoginSampleLayoutOverride/ParseLoginSampleLayoutOverride.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ParseLoginSampleWithDispatchActivity/ParseLoginSampleWithDispatchActivity.iml" filepath="$PROJECT_DIR$/ParseLoginSampleWithDispatchActivity/ParseLoginSampleWithDispatchActivity.iml" />
       <module fileurl="file://$PROJECT_DIR$/ParseLoginUI/ParseLoginUI.iml" filepath="$PROJECT_DIR$/ParseLoginUI/ParseLoginUI.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/nfclock/nfclock.iml" filepath="$PROJECT_DIR$/nfclock/nfclock.iml" />
     </modules>
   </component>
 </project>
+

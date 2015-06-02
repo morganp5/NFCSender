@@ -28,17 +28,6 @@
         android:hint="@string/enter_door"
         android:background="#ffffff"></EditText>
 
-    <EditText
-        android:id="@+id/signup_password_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:inputType="textPassword"
-        android:selectAllOnFocus="true"
-        android:hint="Enter Allowed Users"
-        android:background="#ffffff"
-        android:layout_marginTop="10dp" />
-
     <RelativeLayout
         android:layout_width="335dp"
         android:layout_height="88dp"

@@ -5,6 +5,8 @@ import android.util.Log;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.LogInCallback;
+import com.parse.Parse;
+import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -31,7 +33,7 @@ public class Door {
     //Constructor pulls door object from parse and sets up values
     public Door(String ID) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Door");
-        query.whereEqualTo("objectId", ID);
+        query.whereEqualTo("DoorName", ID);
         query.getFirstInBackground(new GetCallback<ParseObject>() {
                                        @Override
                                        public void done(ParseObject door, ParseException e) {
@@ -57,9 +59,14 @@ public class Door {
         user.becomeInBackground(sessionToken, new LogInCallback() {
             public void done(ParseUser user, ParseException e) {
                 if (e == null && user != null) {
-                    Log.i(TAG, "The sesion token user is " + user.getUsername());
+                    Log.i(TAG, "The sesion token user is " + doorRole.getName() + user.getUsername());
                     doorRole.getUsers().add(user);
-                    doorRole.saveInBackground();
+                    try {
+                        doorRole.save();
+                    } catch (ParseException e1) {
+                        e1.printStackTrace();
+                    }
+                    Log.i(TAG, "Saved");
                     groupUsers.add(user.getUsername());
                 } else if (user == null) {
                     Log.i(TAG, "Login Failed User Is Null");
@@ -73,13 +80,19 @@ public class Door {
     private void getAllowedUsers() {
         ParseQuery<ParseRole> query = ParseRole.getQuery();
         Log.i(TAG, getDoorName());
+
         query.whereEqualTo("name", getDoorName());
         query.findInBackground(new FindCallback<ParseRole>() {
             @Override
             public void done(List<ParseRole> objects, ParseException e) {
                 if (e == null) {
+                    ParseACL acl = new ParseACL();
+                    acl.setPublicWriteAccess(true);
+                    acl.setPublicReadAccess(true);
                     for (ParseRole role : objects) {
                         doorRole = role;
+                        doorRole.setACL(acl);
+                        Log.i(TAG,doorRole.getName());
                         ParseRelation<ParseUser> usersRelation = role.getRelation("users");
                         ParseQuery<ParseUser> usersQuery = usersRelation.getQuery();
                         usersQuery.findInBackground(new FindCallback<ParseUser>() {
@@ -112,7 +125,7 @@ public class Door {
             }
         }
         logAccessAttempt(user, accessGranted);
-        Log.i(TAG, "User Authorized" + String.valueOf(accessGranted));
+        Log.i(TAG, "User Authorized " + String.valueOf(accessGranted));
         return accessGranted;
     }
 

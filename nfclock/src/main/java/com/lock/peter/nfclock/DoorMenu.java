@@ -79,14 +79,17 @@ public class DoorMenu extends Activity {
     //If the user enters correct details for the selected door DoorActivity is launched
     public void getDoor() {
         ParseObject door = (ParseObject) selectDoor.getSelectedItem();
-        String doorPin = door.get("Pin").toString();
+        String doorPin ="";
+        if (door.has("Pin")) {
+            doorPin = door.get("Pin").toString();
+        }
         String userPin = doorPinET.getText().toString();
         Log.e("USER_ENTERED_PIN", userPin);
         Log.e(TAG, doorPin);
         door.fetchIfNeededInBackground();
         if (userPin.equals(doorPin)) {
             Intent intent = new Intent(getApplicationContext(), DoorActivity.class);
-            intent.putExtra("id", door.getObjectId());
+            intent.putExtra("id", door.getString("DoorName"));
             startActivity(intent);
         }
     }

@@ -49,6 +49,7 @@ public class DoorOptions {
             unlockRequest.put("Setting", currentSetting);
             if (pinSet) {
                 unlockRequest.put("Pin", getPin());
+                pinSet = false;
             }
         } catch (JSONException e) {
             e.printStackTrace();

@@ -11,14 +11,19 @@ public class User {
     public static String getCurrentUser() {
         String username = "";
         if (currentUser.getUsername() != null) {
-            com.parse.ParseUser currentUser = com.parse.ParseUser.getCurrentUser();
+            currentUser = com.parse.ParseUser.getCurrentUser();
             username = currentUser.getUsername().toString();
         }
         return username;
     }
 
     public static String getSessionToken(){
-        return currentUser.getSessionToken();
+        String st = "";
+        if (currentUser.getUsername() != null) {
+            currentUser = com.parse.ParseUser.getCurrentUser();
+            st = currentUser.getSessionToken();
+        }
+        return st;
     }
 
     public static boolean updatePassword(String currentPassword, String newPassword) throws ParseException {
