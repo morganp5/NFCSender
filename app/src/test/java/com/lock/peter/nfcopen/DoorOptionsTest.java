@@ -41,7 +41,7 @@ public class DoorOptionsTest {
         assertEquals(currentSetting, "Open");
     }
 
-    /*
+
     @Test
     public void testNdefMessage() throws JSONException{
         DoorOptions.setPin(1234);
@@ -57,5 +57,5 @@ public class DoorOptionsTest {
         assertEquals(pin,1234);
 
     }
-    */
+    
 }
